@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	android:paddingBottom="@dimen/activity_vertical_margin"
+	android:paddingLeft="@dimen/activity_horizontal_margin"
+	android:paddingRight="@dimen/activity_horizontal_margin"
+	android:paddingTop="@dimen/activity_vertical_margin"
+	tools:context=".MainActivity">
+
+	<TextView
+		android:text="@string/atmosphere"
+		android:textStyle="bold"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:textAppearance="?android:attr/textAppearanceLarge" />
+
+	<TableLayout
+		android:paddingLeft="16dp"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content">
+
+		<TableRow
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+			<TextView
+				android:text="@string/wind_direction_caption"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+			<TextView
+				android:paddingLeft="16dp"
+				android:textStyle="bold"
+				android:id="@+id/wind_direction"
+				android:text="@string/wind_direction"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+		</TableRow>
+
+		<TableRow
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+			<TextView
+				android:text="@string/wind_speed_caption"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+			<TextView
+				android:paddingLeft="16dp"
+				android:textStyle="bold"
+				android:id="@+id/wind_speed"
+				android:text="@string/wind_speed"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+		</TableRow>
+
+		<TableRow
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+			<TextView
+				android:text="@string/wind_gust_caption"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+			<TextView
+				android:paddingLeft="16dp"
+				android:textStyle="bold"
+				android:id="@+id/wind_gust"
+				android:text="@string/wind_gust"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+		</TableRow>
+
+		<TableRow
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+			<TextView
+				android:text="@string/air_temperature_caption"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+			<TextView
+				android:paddingLeft="16dp"
+				android:textStyle="bold"
+				android:id="@+id/air_temperature"
+				android:text="@string/air_temperature"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+		</TableRow>
+
+		<TableRow
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+			<TextView
+				android:text="@string/dew_point_caption"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+			<TextView
+				android:paddingLeft="16dp"
+				android:textStyle="bold"
+				android:id="@+id/dew_point"
+				android:text="@string/dew_point"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+		</TableRow>
+
+	</TableLayout>
+
+	<View
+  android:layout_width="1dp"
+  android:layout_height="30dp">
+</View>
+	
+	<TextView
+		android:text="@string/water_temperature"
+		android:textStyle="bold"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:textAppearance="?android:attr/textAppearanceLarge" />
+	
+	<TableLayout
+		android:paddingLeft="16dp"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content">
+
+		<TableRow
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+			<TextView
+			    android:id="@+id/surface_temperature_caption"
+				android:text="@string/surface_temperature_caption"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+			<TextView
+				android:paddingLeft="99dp"
+				android:textStyle="bold"
+				android:id="@+id/surface_temperature"
+				android:text="@string/surface_temperature"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+		</TableRow>
+
+		<TableRow
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+			<TextView
+			    android:id="@+id/one_meter_temperature_caption"
+				android:text="@string/one_meter_temperature_caption"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+			<TextView
+				android:paddingLeft="99dp"
+				android:textStyle="bold"
+				android:id="@+id/one_meter_temperature"
+				android:text="@string/one_meter_temperature"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+		</TableRow>
+
+		<TableRow
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+			<TextView
+			    android:id="@+id/five_meter_temperature_caption"
+				android:text="@string/five_meter_temperature_caption"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+			<TextView
+				android:paddingLeft="99dp"
+				android:textStyle="bold"
+				android:id="@+id/five_meter_temperature"
+				android:text="@string/five_meter_temperature"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+		</TableRow>
+
+		<TableRow
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+			<TextView
+			    android:id="@+id/ten_meter_temperature_caption"
+				android:text="@string/ten_meter_temperature_caption"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+			<TextView
+				android:paddingLeft="99dp"
+				android:textStyle="bold"
+				android:id="@+id/ten_meter_temperature"
+				android:text="@string/ten_meter_temperature"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+		</TableRow>
+
+		<TableRow
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+			<TextView
+			    android:id="@+id/fifteen_meter_temperature_caption"
+				android:text="@string/fifteen_meter_temperature_caption"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+			<TextView
+				android:paddingLeft="99dp"
+				android:textStyle="bold"
+				android:id="@+id/fifteen_meter_temperature"
+				android:text="@string/fifteen_meter_temperature"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+		</TableRow>
+		
+		<TableRow
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+			<TextView
+			    android:id="@+id/twenty_meter_temperature_caption"
+				android:text="@string/twenty_meter_temperature_caption"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+			<TextView
+				android:paddingLeft="99dp"
+				android:textStyle="bold"
+				android:id="@+id/twenty_meter_temperature"
+				android:text="@string/twenty_meter_temperature"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+		</TableRow>
+
+	</TableLayout>
+
+
+</LinearLayout>

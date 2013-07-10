@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Lake Mendota Buoy</string>
+    <string name="action_settings">Settings</string>
+    <string name="wind_direction">WSW</string>
+    <string name="wind_direction_caption">Wind Direction</string>
+    <string name="wind_speed">7.5 knts</string>
+    <string name="wind_speed_caption">Wind Speed</string>
+    <string name="wind_gust">10.8 knts</string>
+    <string name="wind_gust_caption">Wind Gust</string>
+    <string name="air_temperature">80.9°F</string>
+    <string name="air_temperature_caption">Air Temperature</string>
+    <string name="dew_point">74.4°F</string>
+    <string name="dew_point_caption">Dew Point</string>
+    <string name="atmosphere">Atmosphere</string>
+    <string name="water_temperature">Water Temperature</string>
+    <string name="surface_temperature_caption">Surface</string>
+    <string name="surface_temperature">77.3°F</string>
+    <string name="one_meter_temperature_caption">-1 m</string>
+    <string name="one_meter_temperature">76.9°F</string>
+    <string name="five_meter_temperature_caption">-5 m</string>
+    <string name="five_meter_temperature">76.9°F</string>
+    <string name="ten_meter_temperature_caption">-10 m</string>
+    <string name="ten_meter_temperature">76.9°F</string>
+    <string name="fifteen_meter_temperature_caption">-15 m</string>
+    <string name="fifteen_meter_temperature">76.9°F</string>
+    <string name="twenty_meter_temperature_caption">-20 m</string>
+    <string name="twenty_meter_temperature">76.9°F</string>
+
+</resources>
