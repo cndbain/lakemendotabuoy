@@ -27,5 +27,7 @@
     <string name="fifteen_meter_temperature">76.9°F</string>
     <string name="twenty_meter_temperature_caption">-20 m</string>
     <string name="twenty_meter_temperature">76.9°F</string>
+    <string name="humidity_caption">Humidity</string>
+    <string name="humidity">82.0%</string>
 
 </resources>
