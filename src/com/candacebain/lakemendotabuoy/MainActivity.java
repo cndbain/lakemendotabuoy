@@ -31,7 +31,8 @@ public class MainActivity extends Activity {
 	private static final String DEWPOINT_CALC = "DEWPOINT_CALC";
 	private static final String WIND_SPEED = "WIND_SPEED_2.0";
 	private static final String WIND_DIRECTION = "WIND_DIRECTION_2.0";
-	// !!! How to do wind gust?
+	private static final String WIND_GUST = "WIND_GUST";
+	
 	private static final String WATER_TEMP_0 = "WATER_TEMP_0";
 	private static final String WATER_TEMP_1 = "WATER_TEMP_1";
 	private static final String WATER_TEMP_5 = "WATER_TEMP_5";
@@ -40,7 +41,7 @@ public class MainActivity extends Activity {
 	private static final String WATER_TEMP_20 = "WATER_TEMP_20";
 
 	// !!! Can also use XML here
-	private static final String dataQueryURL = "http://metobs.ssec.wisc.edu/app/mendota/buoy/data/json?symbols=t:rh:td:spd:dir:wt_0.0:wt_1.0:wt_5.0:wt_10.0:wt_15.0:wt_20.0";
+	private static final String dataQueryURL = "http://metobs.ssec.wisc.edu/app/mendota/buoy/data/json?symbols=t:rh:td:spd:dir:gust:wt_0.0:wt_1.0:wt_5.0:wt_10.0:wt_15.0:wt_20.0";
 
 	private TextView windDirection;
 	private TextView windSpeed;
