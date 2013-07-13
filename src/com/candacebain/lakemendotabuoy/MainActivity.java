@@ -33,7 +33,6 @@ public class MainActivity extends Activity {
 	private static final DecimalFormat decimalFormat = new DecimalFormat(
 			"###.#");
 
-	// Do an enum map with these values?
 	private static final String AIR_TEMP = "AIR_TEMP";
 	private static final String REL_HUM = "REL_HUM";
 	private static final String DEWPOINT_CALC = "DEWPOINT_CALC";
@@ -48,9 +47,10 @@ public class MainActivity extends Activity {
 	private static final String WATER_TEMP_15 = "WATER_TEMP_15.0";
 	private static final String WATER_TEMP_20 = "WATER_TEMP_20.0";
 
-	// !!! Can also use XML here
 	private static final String dataQueryURL = "http://metobs.ssec.wisc.edu/app/mendota/buoy/data/xml?symbols=t:rh:td:spd:dir:gust:wt_0.0:wt_1.0:wt_5.0:wt_10.0:wt_15.0:wt_20.0";
 
+	private String[] windDirections = null;
+	
 	private TextView windDirection;
 	private TextView windSpeed;
 	private TextView windGust;
@@ -70,9 +70,17 @@ public class MainActivity extends Activity {
 	private TextView tenMeterCaption;
 	private TextView fifteenMeterCaption;
 	private TextView twentyMeterCaption;
+	
+	// !!! Figure out logging
+	// !!! Figure out how to show the preferences
+	// !!! Figure out how to automatically update
+	// !!! Figure out how to show when last update happened
+	// !!! Figure out how to add a button to force an update
+	// !!! Figure out how to show an error when anything goes wrong
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		
 		super.onCreate(savedInstanceState);
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 		setContentView(R.layout.activity_main);
@@ -100,8 +108,54 @@ public class MainActivity extends Activity {
 		tenMeterCaption = (TextView) findViewById(R.id.ten_meter_temperature_caption);
 		fifteenMeterCaption = (TextView) findViewById(R.id.fifteen_meter_temperature_caption);
 		twentyMeterCaption = (TextView) findViewById(R.id.twenty_meter_temperature_caption);
+
+		String temperatureUnits = PreferenceManager
+				.getDefaultSharedPreferences(this).getString(
+						SettingsActivity.KEY_PREF_TEMPERATURE_UNITS, "");
+		if (temperatureUnits
+				.equals(getString(R.string.pref_distanceUnits_feet))) {
+			oneMeterCaption
+					.setText(getString(R.string.one_meter_temperature_caption_in_feet));
+			fiveMeterCaption
+					.setText(getString(R.string.five_meter_temperature_caption_in_feet));
+			tenMeterCaption
+					.setText(getString(R.string.ten_meter_temperature_caption_in_feet));
+			fifteenMeterCaption
+					.setText(getString(R.string.fifteen_meter_temperature_caption_in_feet));
+			twentyMeterCaption
+					.setText(getString(R.string.twenty_meter_temperature_caption_in_feet));
+		} else if (temperatureUnits
+				.equals(getString(R.string.pref_distanceUnits_meters))) {
+			oneMeterCaption
+					.setText(getString(R.string.one_meter_temperature_caption));
+			fiveMeterCaption
+					.setText(getString(R.string.five_meter_temperature_caption));
+			tenMeterCaption
+					.setText(getString(R.string.ten_meter_temperature_caption));
+			fifteenMeterCaption
+					.setText(getString(R.string.fifteen_meter_temperature_caption));
+			twentyMeterCaption
+					.setText(getString(R.string.twenty_meter_temperature_caption));
+		}
 		
-		// !!! Get the text for the captions based on the preference
+		if (windDirections == null){
+			windDirections = new String[] {
+					getString(R.string.wind_direction_NNE),
+					getString(R.string.wind_direction_NE),
+					getString(R.string.wind_direction_ENE),
+					getString(R.string.wind_direction_E),
+					getString(R.string.wind_direction_ESE),
+					getString(R.string.wind_direction_SE),
+					getString(R.string.wind_direction_SSE),
+					getString(R.string.wind_direction_S),
+					getString(R.string.wind_direction_SSW),
+					getString(R.string.wind_direction_SW),
+					getString(R.string.wind_direction_WSW),
+					getString(R.string.wind_direction_W),
+					getString(R.string.wind_direction_WNW),
+					getString(R.string.wind_direction_NW),
+					getString(R.string.wind_direction_NNW) };
+		}
 	}
 
 	@Override
@@ -111,20 +165,17 @@ public class MainActivity extends Activity {
 		return true;
 	}
 
-	private final String[] windDirections = new String[] { "NNE", "NE", "ENE",
-			"E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW",
-			"NNW" };
+
 
 	String getTextForWindDirectionInDegrees(double windDirectionInDegrees) {
 		if (windDirectionInDegrees <= 0 || windDirectionInDegrees > 360) {
-			// !!! resource
-			return "-";
+			return getString(R.string.unknown_value);
 		}
 
 		// deal with special north case
 		if ((windDirectionInDegrees >= 348.75 && windDirectionInDegrees <= 360)
 				|| windDirectionInDegrees > 0 && windDirectionInDegrees < 11.25)
-			return "N";
+			return getString(R.string.wind_direction_N);
 
 		double i = 11.25; // 1/2 degree increment between the directions
 		for (int j = 0; j < windDirections.length; j++) {
@@ -136,82 +187,193 @@ public class MainActivity extends Activity {
 		}
 
 		// shouldn't ever get here
-		return "-";
+		return getString(R.string.unknown_value);
 	}
 	
-	private void displayData(Map<String, Double> result) {
-		
-		String temperatureUnitString = "°C"; // or "°F"
-		String windSpeedUnitString = " m/s"; // or " knts"
-		String humidityUnitString = "%";
+	
+	/**
+	 * 
+	 * @param value
+	 * @return
+	 */
+	double celsiusToFahrenheit (double value) {
+	    return (9.0/5.0)*value+32;
+	}
 
-		// Clear old values
-		windDirection.setText("-");
-		windSpeed.setText("-");
-		windGust.setText("-");
-		airTemperature.setText("-");
-		dewPoint.setText("-");
-		humidity.setText("-");
-		surfaceTemperature.setText("-");
-		oneMeterTemperature.setText("-");
-		fiveMeterTemperature.setText("-");
-		tenMeterTemperature.setText("-");
-		fifteenMeterTemperature.setText("-");
-		twentyMeterTemperature.setText("-");
+	/*
+	    Convert meters/second to miles/hour.
+
+	    from http://www.4wx.com/wxcalc/formulas/windConversion.php
+	    
+	    Args:
+	        val in MPS
+	    Returns:
+	        MPS, or null if val == null
+	*/
+	double metersPerSecondToMilesPerHour (double value) {
+	    return value*2.23694;
+	}
+
+	/*
+	    Convert meters/second to knots.
+
+	    from http://www.4wx.com/wxcalc/formulas/windConversion.php
+
+	    Args:
+	        val in MPS.
+	    Returns:
+	        knots, or null if value == null
+	*/
+	double metersPerSecondToKnots (double value) {
+	    return value*1.9438445; 
+	}
+
+	private void displayData(Map<String, Double> result) {
+
+		// !!! Possibly I should set these on the class on creation and then just change them with the listeners?  
 		
+		// What units should we use to display temperature?
+		String temperatureUnits = PreferenceManager
+				.getDefaultSharedPreferences(this).getString(
+						SettingsActivity.KEY_PREF_TEMPERATURE_UNITS, "");
+		boolean isTemperatureFahrenheit = temperatureUnits.equals(getString(R.string.pref_temperatureUnits_fahrenheit));
+		
+		// What units should we use to display wind speed?
+		String windSpeedUnits = PreferenceManager
+				.getDefaultSharedPreferences(this).getString(
+						SettingsActivity.KEY_PREF_WIND_SPEED_UNITS, "");
+		boolean isWindSpeedMph = windSpeedUnits.equals(getString(R.string.pref_windSpeedUnits_milesPerHour));
+		boolean isWindSpeedKnots = windSpeedUnits.equals(getString(R.string.pref_windSpeedUnits_knots));
+		
+		// Set up the suffixes for the units
+		String temperatureUnitSuffix = getString(R.string.celsius_suffix); 
+		if (isTemperatureFahrenheit){
+			temperatureUnitSuffix = getString(R.string.fahrenheit_suffix);
+		}
+		
+		String windSpeedUnitSuffix = getString(R.string.meters_per_second_suffix);
+		if (isWindSpeedMph){
+			windSpeedUnitSuffix = getString(R.string.miles_per_hour_suffix);
+		}
+		else if (isWindSpeedKnots){
+			windSpeedUnitSuffix = getString(R.string.knots_suffix);
+		}
+		
+		String humidityUnitSuffix = getString(R.string.percent_suffix);
+		
+		// Clear old values
+		String unknownValue = getString(R.string.unknown_value);
+		windDirection.setText(unknownValue);
+		windSpeed.setText(unknownValue);
+		windGust.setText(unknownValue);
+		airTemperature.setText(unknownValue);
+		dewPoint.setText(unknownValue);
+		humidity.setText(unknownValue);
+		surfaceTemperature.setText(unknownValue);
+		oneMeterTemperature.setText(unknownValue);
+		fiveMeterTemperature.setText(unknownValue);
+		tenMeterTemperature.setText(unknownValue);
+		fifteenMeterTemperature.setText(unknownValue);
+		twentyMeterTemperature.setText(unknownValue);
+
 		if (result.containsKey(WIND_DIRECTION)) {
 			double value = result.get(WIND_DIRECTION);
 			windDirection.setText(getTextForWindDirectionInDegrees(value));
-		} 
-		if (result.containsKey(WIND_SPEED)){
+		}
+		if (result.containsKey(WIND_SPEED)) {
 			double value = result.get(WIND_SPEED);
-			windSpeed.setText(decimalFormat.format(value) + windSpeedUnitString);
+			if (isWindSpeedMph){
+				value = metersPerSecondToMilesPerHour(value);
+			}
+			else if (isWindSpeedKnots){
+				value = metersPerSecondToKnots(value);
+			}
+			windSpeed
+					.setText(decimalFormat.format(value) + windSpeedUnitSuffix);
 		}
-		if (result.containsKey(WIND_GUST)){
+		if (result.containsKey(WIND_GUST)) {
 			double value = result.get(WIND_GUST);
-			windGust.setText(decimalFormat.format(value) + windSpeedUnitString);
+			if (isWindSpeedMph){
+				value = metersPerSecondToMilesPerHour(value);
+			}
+			else if (isWindSpeedKnots){
+				value = metersPerSecondToKnots(value);
+			}
+			windGust.setText(decimalFormat.format(value) + windSpeedUnitSuffix);
 		}
-		if (result.containsKey(AIR_TEMP)){
+		if (result.containsKey(AIR_TEMP)) {
 			double value = result.get(AIR_TEMP);
-			airTemperature.setText(decimalFormat.format(value) + temperatureUnitString);
+			if (isTemperatureFahrenheit){
+				value = celsiusToFahrenheit(value);
+			}
+			airTemperature.setText(decimalFormat.format(value)
+					+ temperatureUnitSuffix);
 		}
-		if (result.containsKey(DEWPOINT_CALC)){
+		if (result.containsKey(DEWPOINT_CALC)) {
 			double value = result.get(DEWPOINT_CALC);
-			dewPoint.setText(decimalFormat.format(value) + temperatureUnitString);
+			if (isTemperatureFahrenheit){
+				value = celsiusToFahrenheit(value);
+			}
+			dewPoint.setText(decimalFormat.format(value)
+					+ temperatureUnitSuffix);
 		}
-		if (result.containsKey(REL_HUM)){
+		if (result.containsKey(REL_HUM)) {
 			double value = result.get(REL_HUM);
-			humidity.setText(decimalFormat.format(value) + humidityUnitString);
+			humidity.setText(decimalFormat.format(value) + humidityUnitSuffix);
 		}
-		
-		if (result.containsKey(WATER_TEMP_0)){
+		if (result.containsKey(WATER_TEMP_0)) {
 			double value = result.get(WATER_TEMP_0);
-			surfaceTemperature.setText(decimalFormat.format(value) + temperatureUnitString);
+			if (isTemperatureFahrenheit){
+				value = celsiusToFahrenheit(value);
+			}
+			surfaceTemperature.setText(decimalFormat.format(value)
+					+ temperatureUnitSuffix);
 		}
-		if (result.containsKey(WATER_TEMP_1)){
+		if (result.containsKey(WATER_TEMP_1)) {
 			double value = result.get(WATER_TEMP_1);
-			oneMeterTemperature.setText(decimalFormat.format(value) + temperatureUnitString);
+			if (isTemperatureFahrenheit){
+				value = celsiusToFahrenheit(value);
+			}
+			oneMeterTemperature.setText(decimalFormat.format(value)
+					+ temperatureUnitSuffix);
 		}
-		if (result.containsKey(WATER_TEMP_5)){
+		if (result.containsKey(WATER_TEMP_5)) {
 			double value = result.get(WATER_TEMP_5);
-			fiveMeterTemperature.setText(decimalFormat.format(value) + temperatureUnitString);
+			if (isTemperatureFahrenheit){
+				value = celsiusToFahrenheit(value);
+			}
+			fiveMeterTemperature.setText(decimalFormat.format(value)
+					+ temperatureUnitSuffix);
 		}
-		if (result.containsKey(WATER_TEMP_10)){
+		if (result.containsKey(WATER_TEMP_10)) {
 			double value = result.get(WATER_TEMP_10);
-			tenMeterTemperature.setText(decimalFormat.format(value) + temperatureUnitString);
+			if (isTemperatureFahrenheit){
+				value = celsiusToFahrenheit(value);
+			}
+			tenMeterTemperature.setText(decimalFormat.format(value)
+					+ temperatureUnitSuffix);
 		}
-		if (result.containsKey(WATER_TEMP_15)){
+		if (result.containsKey(WATER_TEMP_15)) {
 			double value = result.get(WATER_TEMP_15);
-			fifteenMeterTemperature.setText(decimalFormat.format(value) + temperatureUnitString);
+			if (isTemperatureFahrenheit){
+				value = celsiusToFahrenheit(value);
+			}
+			fifteenMeterTemperature.setText(decimalFormat.format(value)
+					+ temperatureUnitSuffix);
 		}
-		if (result.containsKey(WATER_TEMP_20)){
+		if (result.containsKey(WATER_TEMP_20)) {
 			double value = result.get(WATER_TEMP_20);
-			twentyMeterTemperature.setText(decimalFormat.format(value) + temperatureUnitString);
+			if (isTemperatureFahrenheit){
+				value = celsiusToFahrenheit(value);
+			}
+			twentyMeterTemperature.setText(decimalFormat.format(value)
+					+ temperatureUnitSuffix);
 		}
 	}
 
 	private void updateData() {
 		// !!! I'll need to figure out how to show error messages
+		// !!! And remember to get the error messages from the resources.
 		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 		if (networkInfo != null && networkInfo.isConnected()) {
@@ -278,22 +440,22 @@ public class MainActivity extends Activity {
 			parser.nextTag();
 
 			String dataType = null;
-			
+
 			parser.require(XmlPullParser.START_TAG, null, "metobs");
 			while (parser.next() != XmlPullParser.END_DOCUMENT) {
 				if (parser.getEventType() == XmlPullParser.START_TAG) {
 					String name = parser.getName();
-					if (name.equals("data")){
+					if (name.equals("data")) {
 						dataType = parser.getAttributeValue(null, "symbol");
 					}
-				}
-				else if (parser.getEventType() == XmlPullParser.TEXT && dataType != null){
+				} else if (parser.getEventType() == XmlPullParser.TEXT
+						&& dataType != null) {
 					// Get the value and store it
 					String text = parser.getText();
-					String [] values = text.split(",");
-					entries.put(dataType, Double.parseDouble(values[values.length - 1]));
-				}
-				else if (parser.getEventType() == XmlPullParser.END_TAG){
+					String[] values = text.split(",");
+					entries.put(dataType,
+							Double.parseDouble(values[values.length - 1]));
+				} else if (parser.getEventType() == XmlPullParser.END_TAG) {
 					dataType = null;
 				}
 			}

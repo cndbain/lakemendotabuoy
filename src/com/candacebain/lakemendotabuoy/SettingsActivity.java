@@ -5,7 +5,10 @@ import android.preference.PreferenceActivity;
 
 public class SettingsActivity extends PreferenceActivity {
 	
-	public static final String KEY_PREF_SYNC_CONN = "pref_syncConnectionType";
+	public static final String KEY_PREF_WIND_SPEED_UNITS = "pref_windSpeedUnits";
+	public static final String KEY_PREF_DISTANCE_UNITS = "pref_distanceUnits";
+	public static final String KEY_PREF_TEMPERATURE_UNITS = "pref_temperatureUnits";
+	public static final String KEY_PREF_UPDATE_INTERVAL = "pref_updateInterval";
 	
     @SuppressWarnings("deprecation")
 	@Override

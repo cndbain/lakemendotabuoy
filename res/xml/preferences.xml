@@ -1,26 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <ListPreference
-        android:defaultValue="@string/pref_distanceUnits_default"
-        android:dialogTitle="@string/pref_distanceUnits"
-        android:entries="@array/pref_distanceUnits"
-        android:entryValues="@array/pref_distanceUnits"
-        android:key="pref_distanceUnits"
-        android:title="@string/pref_distanceUnits" />
-    <ListPreference
-        android:defaultValue="@string/pref_temperatureUnits_default"
-        android:dialogTitle="@string/pref_temperatureUnits"
-        android:entries="@array/pref_temperatureUnits"
-        android:entryValues="@array/pref_temperatureUnits"
-        android:key="pref_temperatureUnits"
-        android:title="@string/pref_temperatureUnits" />
-    <ListPreference
-        android:defaultValue="@string/pref_updateInterval_default"
-        android:dialogTitle="@string/pref_updateInterval"
-        android:entries="@array/pref_updateInterval"
-        android:entryValues="@array/pref_updateIntervalValues"
-        android:key="pref_updateInterval"
-        android:title="@string/pref_updateInterval" />
+	<ListPreference
+		android:defaultValue="@string/pref_windSpeedUnits_milesPerHour"
+		android:dialogTitle="@string/pref_windSpeedUnits"
+		android:entries="@array/pref_windSpeedUnits"
+		android:entryValues="@array/pref_windSpeedUnits"
+		android:key="pref_windSpeedUnits"
+		android:title="@string/pref_windSpeedUnits" />
+	<ListPreference
+		android:defaultValue="@string/pref_temperatureUnits_fahrenheit"
+		android:dialogTitle="@string/pref_temperatureUnits"
+		android:entries="@array/pref_temperatureUnits"
+		android:entryValues="@array/pref_temperatureUnits"
+		android:key="pref_temperatureUnits"
+		android:title="@string/pref_temperatureUnits" />
+	<ListPreference
+		android:defaultValue="@string/pref_distanceUnits_feet"
+		android:dialogTitle="@string/pref_distanceUnits"
+		android:entries="@array/pref_distanceUnits"
+		android:entryValues="@array/pref_distanceUnits"
+		android:key="pref_distanceUnits"
+		android:title="@string/pref_distanceUnits" />
+	<ListPreference
+		android:defaultValue="@string/pref_updateInterval_default"
+		android:dialogTitle="@string/pref_updateInterval"
+		android:entries="@array/pref_updateInterval"
+		android:entryValues="@array/pref_updateIntervalValues"
+		android:key="pref_updateInterval"
+		android:title="@string/pref_updateInterval" />
 
 </PreferenceScreen>
