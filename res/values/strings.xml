@@ -29,5 +29,12 @@
     <string name="twenty_meter_temperature">76.9°F</string>
     <string name="humidity_caption">Humidity</string>
     <string name="humidity">82.0%</string>
+    <string name="pref_distanceUnits">Distance Units</string>
+    <string name="pref_distanceUnits_default">Feet</string>
+    <string name="pref_temperatureUnits">Temperature Units</string>
+    <string name="pref_temperatureUnits_default">Fahrenheit</string>
+    <string name="pref_updateInterval">Update Interval</string>
+    <string name="pref_updateInterval_default">300000</string>
+    <string name="title_activity_settings">Settings</string>
 
 </resources>

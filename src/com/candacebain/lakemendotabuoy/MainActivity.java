@@ -18,6 +18,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
@@ -73,13 +74,13 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		updateData();
+		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 		setContentView(R.layout.activity_main);
-
-		findViews();
+		initializeViews();
+		updateData();
 	}
 
-	private void findViews() {
+	private void initializeViews() {
 		windDirection = (TextView) findViewById(R.id.wind_direction);
 		windSpeed = (TextView) findViewById(R.id.wind_speed);
 		windGust = (TextView) findViewById(R.id.wind_gust);
@@ -99,6 +100,8 @@ public class MainActivity extends Activity {
 		tenMeterCaption = (TextView) findViewById(R.id.ten_meter_temperature_caption);
 		fifteenMeterCaption = (TextView) findViewById(R.id.fifteen_meter_temperature_caption);
 		twentyMeterCaption = (TextView) findViewById(R.id.twenty_meter_temperature_caption);
+		
+		// !!! Get the text for the captions based on the preference
 	}
 
 	@Override
