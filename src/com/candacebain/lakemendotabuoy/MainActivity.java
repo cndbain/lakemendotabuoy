@@ -31,7 +31,7 @@ public class MainActivity extends Activity {
 	private static final String DEBUG_TAG = "LakeMendotaBuoy";
 
 	private static final DecimalFormat decimalFormat = new DecimalFormat(
-			"###.#");
+			"000.0");
 
 	private static final String AIR_TEMP = "AIR_TEMP";
 	private static final String REL_HUM = "REL_HUM";
@@ -108,6 +108,8 @@ public class MainActivity extends Activity {
 		tenMeterCaption = (TextView) findViewById(R.id.ten_meter_temperature_caption);
 		fifteenMeterCaption = (TextView) findViewById(R.id.fifteen_meter_temperature_caption);
 		twentyMeterCaption = (TextView) findViewById(R.id.twenty_meter_temperature_caption);
+		
+		// !!! Probably have a set caption method here
 
 		String temperatureUnits = PreferenceManager
 				.getDefaultSharedPreferences(this).getString(
@@ -139,22 +141,7 @@ public class MainActivity extends Activity {
 		}
 		
 		if (windDirections == null){
-			windDirections = new String[] {
-					getString(R.string.wind_direction_NNE),
-					getString(R.string.wind_direction_NE),
-					getString(R.string.wind_direction_ENE),
-					getString(R.string.wind_direction_E),
-					getString(R.string.wind_direction_ESE),
-					getString(R.string.wind_direction_SE),
-					getString(R.string.wind_direction_SSE),
-					getString(R.string.wind_direction_S),
-					getString(R.string.wind_direction_SSW),
-					getString(R.string.wind_direction_SW),
-					getString(R.string.wind_direction_WSW),
-					getString(R.string.wind_direction_W),
-					getString(R.string.wind_direction_WNW),
-					getString(R.string.wind_direction_NW),
-					getString(R.string.wind_direction_NNW) };
+			windDirections = getResources().getStringArray(R.array.windDirections);
 		}
 	}
 
@@ -165,9 +152,9 @@ public class MainActivity extends Activity {
 		return true;
 	}
 
-
-
-	String getTextForWindDirectionInDegrees(double windDirectionInDegrees) {
+	
+	// !!! Finish dealing with the array
+	String formatWindDirection(double windDirectionInDegrees) {
 		if (windDirectionInDegrees <= 0 || windDirectionInDegrees > 360) {
 			return getString(R.string.unknown_value);
 		}
@@ -190,54 +177,27 @@ public class MainActivity extends Activity {
 		return getString(R.string.unknown_value);
 	}
 	
-	
-	/**
-	 * 
-	 * @param value
-	 * @return
-	 */
-	double celsiusToFahrenheit (double value) {
-	    return (9.0/5.0)*value+32;
-	}
-
-	/*
-	    Convert meters/second to miles/hour.
-
-	    from http://www.4wx.com/wxcalc/formulas/windConversion.php
-	    
-	    Args:
-	        val in MPS
-	    Returns:
-	        MPS, or null if val == null
-	*/
-	double metersPerSecondToMilesPerHour (double value) {
-	    return value*2.23694;
-	}
-
-	/*
-	    Convert meters/second to knots.
-
-	    from http://www.4wx.com/wxcalc/formulas/windConversion.php
-
-	    Args:
-	        val in MPS.
-	    Returns:
-	        knots, or null if value == null
-	*/
-	double metersPerSecondToKnots (double value) {
-	    return value*1.9438445; 
-	}
-
-	private void displayData(Map<String, Double> result) {
-
-		// !!! Possibly I should set these on the class on creation and then just change them with the listeners?  
-		
+	private String formatTemperature(double value){
 		// What units should we use to display temperature?
 		String temperatureUnits = PreferenceManager
 				.getDefaultSharedPreferences(this).getString(
 						SettingsActivity.KEY_PREF_TEMPERATURE_UNITS, "");
 		boolean isTemperatureFahrenheit = temperatureUnits.equals(getString(R.string.pref_temperatureUnits_fahrenheit));
 		
+		String temperatureUnitSuffix = getString(R.string.celsius_suffix); 
+		if (isTemperatureFahrenheit){
+			temperatureUnitSuffix = getString(R.string.fahrenheit_suffix);
+		}
+		
+		double useValue = value;
+		if (isTemperatureFahrenheit){
+			useValue =  ConversionUtil.celsiusToFahrenheit(value);
+		}
+		
+		return(decimalFormat.format(useValue) + temperatureUnitSuffix).replaceAll("\\G0", " ");
+	}
+	
+	private String formatWindSpeed(double value){
 		// What units should we use to display wind speed?
 		String windSpeedUnits = PreferenceManager
 				.getDefaultSharedPreferences(this).getString(
@@ -246,21 +206,35 @@ public class MainActivity extends Activity {
 		boolean isWindSpeedKnots = windSpeedUnits.equals(getString(R.string.pref_windSpeedUnits_knots));
 		
 		// Set up the suffixes for the units
-		String temperatureUnitSuffix = getString(R.string.celsius_suffix); 
-		if (isTemperatureFahrenheit){
-			temperatureUnitSuffix = getString(R.string.fahrenheit_suffix);
-		}
-		
-		String windSpeedUnitSuffix = getString(R.string.meters_per_second_suffix);
+		String windSpeedUnitSuffix = " " + getString(R.string.meters_per_second_suffix);
 		if (isWindSpeedMph){
-			windSpeedUnitSuffix = getString(R.string.miles_per_hour_suffix);
+			windSpeedUnitSuffix = " " + getString(R.string.miles_per_hour_suffix);
 		}
 		else if (isWindSpeedKnots){
-			windSpeedUnitSuffix = getString(R.string.knots_suffix);
+			windSpeedUnitSuffix = " " + getString(R.string.knots_suffix);
 		}
 		
-		String humidityUnitSuffix = getString(R.string.percent_suffix);
+		double useValue = value;
+		if (isWindSpeedMph){
+			useValue =  ConversionUtil.metersPerSecondToMilesPerHour(value);
+		}
+		else if (isWindSpeedKnots){
+			useValue =  ConversionUtil.metersPerSecondToKnots(value);
+		}
 		
+		return(decimalFormat.format(useValue) + windSpeedUnitSuffix).replaceAll("\\G0", " ");
+	}
+	
+	private String formatHumidity(double value){
+		String humidityUnitSuffix = getString(R.string.percent_suffix);
+		return (decimalFormat.format(value) + humidityUnitSuffix).replaceAll("\\G0", " ");
+	}
+	
+
+	private void displayData(Map<String, Double> result) {
+		// !!! Add spaces before the wind units, and maybe spaces to make things line up if they're < 10?
+		
+
 		// Clear old values
 		String unknownValue = getString(R.string.unknown_value);
 		windDirection.setText(unknownValue);
@@ -277,97 +251,40 @@ public class MainActivity extends Activity {
 		twentyMeterTemperature.setText(unknownValue);
 
 		if (result.containsKey(WIND_DIRECTION)) {
-			double value = result.get(WIND_DIRECTION);
-			windDirection.setText(getTextForWindDirectionInDegrees(value));
+			windDirection.setText(formatWindDirection(result.get(WIND_DIRECTION)));
 		}
 		if (result.containsKey(WIND_SPEED)) {
-			double value = result.get(WIND_SPEED);
-			if (isWindSpeedMph){
-				value = metersPerSecondToMilesPerHour(value);
-			}
-			else if (isWindSpeedKnots){
-				value = metersPerSecondToKnots(value);
-			}
-			windSpeed
-					.setText(decimalFormat.format(value) + windSpeedUnitSuffix);
+			windSpeed.setText(formatWindSpeed(result.get(WIND_SPEED)));
 		}
 		if (result.containsKey(WIND_GUST)) {
-			double value = result.get(WIND_GUST);
-			if (isWindSpeedMph){
-				value = metersPerSecondToMilesPerHour(value);
-			}
-			else if (isWindSpeedKnots){
-				value = metersPerSecondToKnots(value);
-			}
-			windGust.setText(decimalFormat.format(value) + windSpeedUnitSuffix);
+			windGust.setText(formatWindSpeed(result.get(WIND_GUST)));
 		}
 		if (result.containsKey(AIR_TEMP)) {
-			double value = result.get(AIR_TEMP);
-			if (isTemperatureFahrenheit){
-				value = celsiusToFahrenheit(value);
-			}
-			airTemperature.setText(decimalFormat.format(value)
-					+ temperatureUnitSuffix);
+			airTemperature.setText(formatTemperature(result.get(AIR_TEMP)));
 		}
 		if (result.containsKey(DEWPOINT_CALC)) {
-			double value = result.get(DEWPOINT_CALC);
-			if (isTemperatureFahrenheit){
-				value = celsiusToFahrenheit(value);
-			}
-			dewPoint.setText(decimalFormat.format(value)
-					+ temperatureUnitSuffix);
+			dewPoint.setText(formatTemperature(result.get(DEWPOINT_CALC)));
 		}
 		if (result.containsKey(REL_HUM)) {
-			double value = result.get(REL_HUM);
-			humidity.setText(decimalFormat.format(value) + humidityUnitSuffix);
+			humidity.setText(formatHumidity(result.get(REL_HUM)));
 		}
 		if (result.containsKey(WATER_TEMP_0)) {
-			double value = result.get(WATER_TEMP_0);
-			if (isTemperatureFahrenheit){
-				value = celsiusToFahrenheit(value);
-			}
-			surfaceTemperature.setText(decimalFormat.format(value)
-					+ temperatureUnitSuffix);
+			surfaceTemperature.setText(formatTemperature(result.get(WATER_TEMP_0)));
 		}
 		if (result.containsKey(WATER_TEMP_1)) {
-			double value = result.get(WATER_TEMP_1);
-			if (isTemperatureFahrenheit){
-				value = celsiusToFahrenheit(value);
-			}
-			oneMeterTemperature.setText(decimalFormat.format(value)
-					+ temperatureUnitSuffix);
+			oneMeterTemperature.setText(formatTemperature(result.get(WATER_TEMP_1)));
 		}
 		if (result.containsKey(WATER_TEMP_5)) {
-			double value = result.get(WATER_TEMP_5);
-			if (isTemperatureFahrenheit){
-				value = celsiusToFahrenheit(value);
-			}
-			fiveMeterTemperature.setText(decimalFormat.format(value)
-					+ temperatureUnitSuffix);
+			fiveMeterTemperature.setText(formatTemperature(result.get(WATER_TEMP_5)));
 		}
 		if (result.containsKey(WATER_TEMP_10)) {
-			double value = result.get(WATER_TEMP_10);
-			if (isTemperatureFahrenheit){
-				value = celsiusToFahrenheit(value);
-			}
-			tenMeterTemperature.setText(decimalFormat.format(value)
-					+ temperatureUnitSuffix);
+			tenMeterTemperature.setText(formatTemperature(result.get(WATER_TEMP_10)));
 		}
 		if (result.containsKey(WATER_TEMP_15)) {
-			double value = result.get(WATER_TEMP_15);
-			if (isTemperatureFahrenheit){
-				value = celsiusToFahrenheit(value);
-			}
-			fifteenMeterTemperature.setText(decimalFormat.format(value)
-					+ temperatureUnitSuffix);
+			fifteenMeterTemperature.setText(formatTemperature(result.get(WATER_TEMP_15)));
 		}
 		if (result.containsKey(WATER_TEMP_20)) {
-			double value = result.get(WATER_TEMP_20);
-			if (isTemperatureFahrenheit){
-				value = celsiusToFahrenheit(value);
-			}
-			twentyMeterTemperature.setText(decimalFormat.format(value)
-					+ temperatureUnitSuffix);
+			twentyMeterTemperature.setText(formatTemperature(result.get(WATER_TEMP_20)));
 		}
 	}
 

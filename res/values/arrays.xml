@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+   <string-array name="windDirections">
+        <item name="NNE">@string/wind_direction_NNE</item>
+        <item name="NE">@string/wind_direction_NE</item>
+        <item name="ENE">@string/wind_direction_ENE</item>
+        <item name="E">@string/wind_direction_E</item>
+        <item name="ESE">@string/wind_direction_ESE</item>
+        <item name="SE">@string/wind_direction_SE</item>
+        <item name="SSE">@string/wind_direction_SSE</item>
+        <item name="S">@string/wind_direction_S</item>
+        <item name="SSW">@string/wind_direction_SSW</item>
+        <item name="SW">@string/wind_direction_SW</item>
+        <item name="WSE">@string/wind_direction_WSW</item>
+        <item name="W">@string/wind_direction_W</item>
+        <item name="WNW">@string/wind_direction_WNW</item>
+        <item name="NW">@string/wind_direction_NW</item>
+        <item name="NNW">@string/wind_direction_NNW</item>
+    </string-array>
     <string-array name="pref_distanceUnits">
         <item name="FEET">@string/pref_distanceUnits_feet</item>
         <item name="METERS">@string/pref_distanceUnits_meters</item>
