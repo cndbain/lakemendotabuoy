@@ -3,11 +3,11 @@
 
     <string name="app_name">Lake Mendota Buoy</string>
     <string name="atmosphere">Atmosphere</string>
-    <string name="wind_direction_caption">Wind Direction</string>
-    <string name="wind_speed_caption">Wind Speed</string>
-    <string name="wind_gust_caption">Wind Gust</string>
-    <string name="air_temperature_caption">Air Temperature</string>
-    <string name="dew_point_caption">Dew Point</string>
+    <string name="wind_direction_caption">Wind direction</string>
+    <string name="wind_speed_caption">Wind speed</string>
+    <string name="wind_gust_caption">Wind gust</string>
+    <string name="air_temperature_caption">Temperature</string>
+    <string name="dew_point_caption">Dew point</string>
     <string name="humidity_caption">Humidity</string>
     <string name="water_temperature">Water Temperature</string>
     <string name="surface_temperature_caption">Surface</string>
@@ -21,6 +21,7 @@
     <string name="fifteen_meter_temperature_caption_in_feet">-49.2 feet</string>
     <string name="twenty_meter_temperature_caption">-20 meters</string>
     <string name="twenty_meter_temperature_caption_in_feet">-65.6 feet</string>
+    <string name="updated_at">Updated at:</string>
     <string name="unknown_value">-</string>
     <string name="wind_direction_N">N</string>
     <string name="wind_direction_NNE">NNE</string>
@@ -39,7 +40,7 @@
     <string name="wind_direction_NW">NW</string>
     <string name="wind_direction_NNW">NNW</string>
     <string name="miles_per_hour_suffix">mph</string>
-    <string name="knots_suffix">knts</string>
+    <string name="knots_suffix">konts</string>
     <string name="meters_per_second_suffix">m/s</string>
     <string name="percent_suffix">%</string>
     <string name="fahrenheit_suffix">°F</string>

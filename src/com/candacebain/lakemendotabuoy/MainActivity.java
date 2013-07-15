@@ -2,14 +2,16 @@ package com.candacebain.lakemendotabuoy;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -33,14 +35,21 @@ public class MainActivity extends Activity {
 	private static final String DEBUG_TAG = "LakeMendotaBuoy";
 
 	private static final DecimalFormat decimalFormat = new DecimalFormat(
-			"000.0");
+			"###.0");
 
+	private static final SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+    private static final SimpleDateFormat outputDateFormat = new SimpleDateFormat("MMM dd, yyyy h:mm a", Locale.US);
+
+	private static final String dataQueryURL = "http://metobs.ssec.wisc.edu/app/mendota/buoy/data/xml?symbols=t:rh:td:spd:dir:gust:wt_0.0:wt_1.0:wt_5.0:wt_10.0:wt_15.0:wt_20.0";
+
+	// The data identifiers from the metobs XML
 	private static final String AIR_TEMP = "AIR_TEMP";
 	private static final String REL_HUM = "REL_HUM";
 	private static final String DEWPOINT_CALC = "DEWPOINT_CALC";
 	private static final String WIND_SPEED = "WIND_SPEED_2.0";
 	private static final String WIND_DIRECTION = "WIND_DIRECTION_2.0";
 	private static final String WIND_GUST = "WIND_GUST";
+	private static final String TIMESTAMP = "timestamp";
 
 	private static final String WATER_TEMP_0 = "WATER_TEMP_0.0";
 	private static final String WATER_TEMP_1 = "WATER_TEMP_1.0";
@@ -49,10 +58,8 @@ public class MainActivity extends Activity {
 	private static final String WATER_TEMP_15 = "WATER_TEMP_15.0";
 	private static final String WATER_TEMP_20 = "WATER_TEMP_20.0";
 
-	private static final String dataQueryURL = "http://metobs.ssec.wisc.edu/app/mendota/buoy/data/xml?symbols=t:rh:td:spd:dir:gust:wt_0.0:wt_1.0:wt_5.0:wt_10.0:wt_15.0:wt_20.0";
-
 	private String[] windDirections = null;
-	
+
 	private TextView windDirection;
 	private TextView windSpeed;
 	private TextView windGust;
@@ -73,16 +80,20 @@ public class MainActivity extends Activity {
 	private TextView fifteenMeterCaption;
 	private TextView twentyMeterCaption;
 	
+	private TextView updatedAt;
+
+
 	// !!! Figure out logging
-	// !!! Figure out how to show the preferences
 	// !!! Figure out how to automatically update
 	// !!! Figure out how to show when last update happened
 	// !!! Figure out how to add a button to force an update
 	// !!! Figure out how to show an error when anything goes wrong
+	// !!! Clean up
+	// !!! Check in to github
+	// !!! check in to play store - with proper attribution
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		
 		super.onCreate(savedInstanceState);
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 		setContentView(R.layout.activity_main);
@@ -91,6 +102,9 @@ public class MainActivity extends Activity {
 	}
 
 	private void initializeViews() {
+		inputDateFormat.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
+
+		
 		windDirection = (TextView) findViewById(R.id.wind_direction);
 		windSpeed = (TextView) findViewById(R.id.wind_speed);
 		windGust = (TextView) findViewById(R.id.wind_gust);
@@ -111,8 +125,19 @@ public class MainActivity extends Activity {
 		fifteenMeterCaption = (TextView) findViewById(R.id.fifteen_meter_temperature_caption);
 		twentyMeterCaption = (TextView) findViewById(R.id.twenty_meter_temperature_caption);
 		
-		// !!! Probably have a set caption method here
+		updatedAt = (TextView) findViewById(R.id.updated_at);
 
+		setWaterDepthCaptions();
+
+		if (windDirections == null) {
+			windDirections = getResources().getStringArray(
+					R.array.windDirections);
+		}
+	}
+
+	// !!! Want to have listeners for if settings change, if so set water depth
+	// captions and update data
+	private void setWaterDepthCaptions() {
 		String temperatureUnits = PreferenceManager
 				.getDefaultSharedPreferences(this).getString(
 						SettingsActivity.KEY_PREF_TEMPERATURE_UNITS, "");
@@ -141,35 +166,30 @@ public class MainActivity extends Activity {
 			twentyMeterCaption
 					.setText(getString(R.string.twenty_meter_temperature_caption));
 		}
-		
-		if (windDirections == null){
-			windDirections = getResources().getStringArray(R.array.windDirections);
-		}
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-	    // Handle item selection
-	    switch (item.getItemId()) {
-	        case R.id.action_settings:
-	        	startActivity(new Intent(this, SettingsActivity.class));
-	            return true;
-	        case R.id.action_update:
-	        	updateData();
-	            return true;
-	        default:
-	            return super.onOptionsItemSelected(item);
-	    }
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.action_settings:
+			// !!! This needs back buttons and possibly ok buttons.
+			startActivity(new Intent(this, SettingsActivity.class));
+			return true;
+		case R.id.action_update:
+			updateData();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
-	
-	// !!! Finish dealing with the array
+
 	String formatWindDirection(double windDirectionInDegrees) {
 		if (windDirectionInDegrees <= 0 || windDirectionInDegrees > 360) {
 			return getString(R.string.unknown_value);
@@ -190,85 +210,69 @@ public class MainActivity extends Activity {
 		}
 
 		// shouldn't ever get here
-		return getString( R.string.unknown_value);
+		return getString(R.string.unknown_value);
 	}
-	
-	private String formatTemperature(double value){
+
+	private String formatTemperature(double value) {
 		// What units should we use to display temperature?
 		String temperatureUnits = PreferenceManager
 				.getDefaultSharedPreferences(this).getString(
 						SettingsActivity.KEY_PREF_TEMPERATURE_UNITS, "");
-		boolean isTemperatureFahrenheit = temperatureUnits.equals(getString(R.string.pref_temperatureUnits_fahrenheit));
-		
-		String temperatureUnitSuffix = getString(R.string.celsius_suffix); 
-		if (isTemperatureFahrenheit){
+		boolean isTemperatureFahrenheit = temperatureUnits
+				.equals(getString(R.string.pref_temperatureUnits_fahrenheit));
+
+		String temperatureUnitSuffix = getString(R.string.celsius_suffix);
+		if (isTemperatureFahrenheit) {
 			temperatureUnitSuffix = getString(R.string.fahrenheit_suffix);
 		}
-		
+
 		double useValue = value;
-		if (isTemperatureFahrenheit){
-			useValue =  ConversionUtil.celsiusToFahrenheit(value);
+		if (isTemperatureFahrenheit) {
+			useValue = ConversionUtil.celsiusToFahrenheit(value);
 		}
-		
-		return(decimalFormat.format(useValue) + temperatureUnitSuffix).replaceAll("\\G0", " ");
+
+		return (decimalFormat.format(useValue) + temperatureUnitSuffix);
 	}
-	
-	// !!!! Take out the update button
-	
-	private String formatWindSpeed(double value){
+
+	private String formatWindSpeed(double value) {
 		// What units should we use to display wind speed?
-		String windSpeedUnits = PreferenceManager
-				.getDefaultSharedPreferences(this).getString(
-						SettingsActivity.KEY_PREF_WIND_SPEED_UNITS, "");
-		boolean isWindSpeedMph = windSpeedUnits.equals(getString(R.string.pref_windSpeedUnits_milesPerHour));
-		boolean isWindSpeedKnots = windSpeedUnits.equals(getString(R.string.pref_windSpeedUnits_knots));
-		
+		String windSpeedUnits = PreferenceManager.getDefaultSharedPreferences(
+				this).getString(SettingsActivity.KEY_PREF_WIND_SPEED_UNITS, "");
+		boolean isWindSpeedMph = windSpeedUnits
+				.equals(getString(R.string.pref_windSpeedUnits_milesPerHour));
+		boolean isWindSpeedKnots = windSpeedUnits
+				.equals(getString(R.string.pref_windSpeedUnits_knots));
+
 		// Set up the suffixes for the units
-		String windSpeedUnitSuffix = " " + getString(R.string.meters_per_second_suffix);
-		if (isWindSpeedMph){
-			windSpeedUnitSuffix = " " + getString(R.string.miles_per_hour_suffix);
-		}
-		else if (isWindSpeedKnots){
+		String windSpeedUnitSuffix = " "
+				+ getString(R.string.meters_per_second_suffix);
+		if (isWindSpeedMph) {
+			windSpeedUnitSuffix = " "
+					+ getString(R.string.miles_per_hour_suffix);
+		} else if (isWindSpeedKnots) {
 			windSpeedUnitSuffix = " " + getString(R.string.knots_suffix);
 		}
-		
+
 		double useValue = value;
-		if (isWindSpeedMph){
-			useValue =  ConversionUtil.metersPerSecondToMilesPerHour(value);
+		if (isWindSpeedMph) {
+			useValue = ConversionUtil.metersPerSecondToMilesPerHour(value);
+		} else if (isWindSpeedKnots) {
+			useValue = ConversionUtil.metersPerSecondToKnots(value);
 		}
-		else if (isWindSpeedKnots){
-			useValue =  ConversionUtil.metersPerSecondToKnots(value);
-		}
-		
-		return(decimalFormat.format(useValue) + windSpeedUnitSuffix).replaceAll("\\G0", " ");
+
+		return (decimalFormat.format(useValue) + windSpeedUnitSuffix);
 	}
-	
-	private String formatHumidity(double value){
+
+	private String formatHumidity(double value) {
 		String humidityUnitSuffix = getString(R.string.percent_suffix);
-		return (decimalFormat.format(value) + humidityUnitSuffix).replaceAll("\\G0", " ");
+		return (decimalFormat.format(value) + " " + humidityUnitSuffix);
 	}
-	
 
 	private void displayData(Map<String, Double> result) {
-		// !!! I think don't do this, just leave the old one in place and show timestamps
 		
-		// Clear old values
-		String unknownValue = getString(R.string.unknown_value);
-		windDirection.setText(unknownValue);
-		windSpeed.setText(unknownValue);
-		windGust.setText(unknownValue);
-		airTemperature.setText(unknownValue);
-		dewPoint.setText(unknownValue);
-		humidity.setText(unknownValue);
-		surfaceTemperature.setText(unknownValue);
-		oneMeterTemperature.setText(unknownValue);
-		fiveMeterTemperature.setText(unknownValue);
-		tenMeterTemperature.setText(unknownValue);
-		fifteenMeterTemperature.setText(unknownValue);
-		twentyMeterTemperature.setText(unknownValue);
-
 		if (result.containsKey(WIND_DIRECTION)) {
-			windDirection.setText(formatWindDirection(result.get(WIND_DIRECTION)));
+			windDirection.setText(formatWindDirection(result
+					.get(WIND_DIRECTION)));
 		}
 		if (result.containsKey(WIND_SPEED)) {
 			windSpeed.setText(formatWindSpeed(result.get(WIND_SPEED)));
@@ -286,25 +290,35 @@ public class MainActivity extends Activity {
 			humidity.setText(formatHumidity(result.get(REL_HUM)));
 		}
 		if (result.containsKey(WATER_TEMP_0)) {
-			surfaceTemperature.setText(formatTemperature(result.get(WATER_TEMP_0)));
+			surfaceTemperature.setText(formatTemperature(result
+					.get(WATER_TEMP_0)));
 		}
 		if (result.containsKey(WATER_TEMP_1)) {
-			oneMeterTemperature.setText(formatTemperature(result.get(WATER_TEMP_1)));
+			oneMeterTemperature.setText(formatTemperature(result
+					.get(WATER_TEMP_1)));
 		}
 		if (result.containsKey(WATER_TEMP_5)) {
-			fiveMeterTemperature.setText(formatTemperature(result.get(WATER_TEMP_5)));
+			fiveMeterTemperature.setText(formatTemperature(result
+					.get(WATER_TEMP_5)));
 		}
 		if (result.containsKey(WATER_TEMP_10)) {
-			tenMeterTemperature.setText(formatTemperature(result.get(WATER_TEMP_10)));
+			tenMeterTemperature.setText(formatTemperature(result
+					.get(WATER_TEMP_10)));
 		}
 		if (result.containsKey(WATER_TEMP_15)) {
-			fifteenMeterTemperature.setText(formatTemperature(result.get(WATER_TEMP_15)));
+			fifteenMeterTemperature.setText(formatTemperature(result
+					.get(WATER_TEMP_15)));
 		}
 		if (result.containsKey(WATER_TEMP_20)) {
-			twentyMeterTemperature.setText(formatTemperature(result.get(WATER_TEMP_20)));
+			twentyMeterTemperature.setText(formatTemperature(result
+					.get(WATER_TEMP_20)));
+		}
+		if (result.containsKey(TIMESTAMP)){
+			Date dateTime = new Date(Math.round(result.get(TIMESTAMP)));
+			updatedAt.setText(getString(R.string.updated_at) + " " + outputDateFormat.format(dateTime));
 		}
 	}
-	
+
 	private void updateData() {
 		// !!! I'll need to figure out how to show error messages
 		// !!! And remember to get the error messages from the resources.
@@ -333,6 +347,7 @@ public class MainActivity extends Activity {
 
 			// params comes from the execute() call: params[0] is the url.
 			try {
+				// !!! Here set a spinner going
 				return downloadUrl(urls[0]);
 			} catch (IOException e) {
 				// !!! Have to figure out what to do with exceptions/error
@@ -346,12 +361,14 @@ public class MainActivity extends Activity {
 		@Override
 		protected void onPostExecute(Map<String, Double> result) {
 			displayData(result);
+			// !!! Here stop the spinner (Does this happen no matter what? Where
+			// to show error?)
 		}
 	}
 
-	// Given a URL, establishes an HttpUrlConnection and retrieves
-	// the web page content as a InputStream, which it returns as
-	// a string.
+	// Given a URL, establishes an HttpUrlConnection, parses the XML, returns a
+	// key->value pair for the latest buoy data.
+	// !!! Can just use the hard coded URL instead of passing this in?
 	private Map<String, Double> downloadUrl(String myurl) throws IOException {
 		InputStream is = null;
 		Map<String, Double> entries = new HashMap<String, Double>();
@@ -377,43 +394,50 @@ public class MainActivity extends Activity {
 
 			parser.require(XmlPullParser.START_TAG, null, "metobs");
 			while (parser.next() != XmlPullParser.END_DOCUMENT) {
-				if (parser.getEventType() == XmlPullParser.START_TAG) {
+
+				switch (parser.getEventType()) {
+				case XmlPullParser.START_TAG:
 					String name = parser.getName();
 					if (name.equals("data")) {
 						dataType = parser.getAttributeValue(null, "symbol");
+					} else if (name.equals("timestamp")) {
+						dataType = name;
 					}
-				} else if (parser.getEventType() == XmlPullParser.TEXT
-						&& dataType != null) {
-					// Get the value and store it
-					String text = parser.getText();
-					String[] values = text.split(",");
-					entries.put(dataType,
-							Double.parseDouble(values[values.length - 1]));
-				} else if (parser.getEventType() == XmlPullParser.END_TAG) {
+					break;
+				case XmlPullParser.TEXT:
+					if (dataType != null) {
+						String text = parser.getText();
+						String[] values = text.split(",");
+						if (dataType.equals("timestamp")) {
+							// Store timestamp value
+							Date dateTime = inputDateFormat
+									.parse(values[values.length - 1]);
+							entries.put(dataType, (double) dateTime.getTime());
+						} else {
+							// Store double value
+							entries.put(dataType, Double
+									.parseDouble(values[values.length - 1]));
+						}
+					}
+					break;
+				case XmlPullParser.END_TAG:
 					dataType = null;
+					break;
 				}
 			}
-			// Makes sure that the InputStream is closed after the app is
-			// finished using it.
 		} catch (XmlPullParserException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} finally {
+			// Makes sure that the InputStream is closed after the app is
+			// finished using it.
 			if (is != null) {
 				is.close();
 			}
 		}
 		return entries;
 	}
-
-	// Reads an InputStream and converts it to a String.
-	public String readIt(InputStream stream, int len) throws IOException,
-			UnsupportedEncodingException {
-		Reader reader = null;
-		reader = new InputStreamReader(stream, "UTF-8");
-		char[] buffer = new char[len];
-		reader.read(buffer);
-		return new String(buffer);
-	}
-
 }
