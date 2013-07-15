@@ -15,6 +15,15 @@
         tools:context=".MainActivity" >
 
         <TextView
+            android:id="@+id/updated_at"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text="@string/updated_at"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/buoy" />
+
+        <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="@string/atmosphere"
@@ -295,15 +304,6 @@
         <View
             android:layout_width="1dp"
             android:layout_height="2dp" />
-
-        <TextView
-            android:id="@+id/updated_at"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/updated_at"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/buoy"
-            android:textStyle="bold" />
     </LinearLayout>
 
 </ScrollView>

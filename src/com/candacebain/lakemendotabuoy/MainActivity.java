@@ -33,12 +33,15 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
 
 	private static final String DEBUG_TAG = "LakeMendotaBuoy";
+	private static final int SETTINGS_RESPONSE = 1;
 
 	private static final DecimalFormat decimalFormat = new DecimalFormat(
 			"###.0");
 
-	private static final SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
-    private static final SimpleDateFormat outputDateFormat = new SimpleDateFormat("MMM dd, yyyy h:mm a", Locale.US);
+	private static final SimpleDateFormat inputDateFormat = new SimpleDateFormat(
+			"yyyy-MM-dd HH:mm:ss", Locale.US);
+	private static final SimpleDateFormat outputDateFormat = new SimpleDateFormat(
+			"MMM dd, yyyy h:mm a", Locale.US);
 
 	private static final String dataQueryURL = "http://metobs.ssec.wisc.edu/app/mendota/buoy/data/xml?symbols=t:rh:td:spd:dir:gust:wt_0.0:wt_1.0:wt_5.0:wt_10.0:wt_15.0:wt_20.0";
 
@@ -79,14 +82,11 @@ public class MainActivity extends Activity {
 	private TextView tenMeterCaption;
 	private TextView fifteenMeterCaption;
 	private TextView twentyMeterCaption;
-	
-	private TextView updatedAt;
 
+	private TextView updatedAt;
 
 	// !!! Figure out logging
 	// !!! Figure out how to automatically update
-	// !!! Figure out how to show when last update happened
-	// !!! Figure out how to add a button to force an update
 	// !!! Figure out how to show an error when anything goes wrong
 	// !!! Clean up
 	// !!! Check in to github
@@ -101,10 +101,8 @@ public class MainActivity extends Activity {
 		updateData();
 	}
 
-	private void initializeViews() {
+	private void initializeViews() {		
 		inputDateFormat.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
-
-		
 		windDirection = (TextView) findViewById(R.id.wind_direction);
 		windSpeed = (TextView) findViewById(R.id.wind_speed);
 		windGust = (TextView) findViewById(R.id.wind_gust);
@@ -124,7 +122,7 @@ public class MainActivity extends Activity {
 		tenMeterCaption = (TextView) findViewById(R.id.ten_meter_temperature_caption);
 		fifteenMeterCaption = (TextView) findViewById(R.id.fifteen_meter_temperature_caption);
 		twentyMeterCaption = (TextView) findViewById(R.id.twenty_meter_temperature_caption);
-		
+
 		updatedAt = (TextView) findViewById(R.id.updated_at);
 
 		setWaterDepthCaptions();
@@ -135,13 +133,11 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	// !!! Want to have listeners for if settings change, if so set water depth
-	// captions and update data
 	private void setWaterDepthCaptions() {
-		String temperatureUnits = PreferenceManager
+		String distanceUnits = PreferenceManager
 				.getDefaultSharedPreferences(this).getString(
-						SettingsActivity.KEY_PREF_TEMPERATURE_UNITS, "");
-		if (temperatureUnits
+						SettingsActivity.KEY_PREF_DISTANCE_UNITS, "");
+		if (distanceUnits
 				.equals(getString(R.string.pref_distanceUnits_feet))) {
 			oneMeterCaption
 					.setText(getString(R.string.one_meter_temperature_caption_in_feet));
@@ -153,7 +149,7 @@ public class MainActivity extends Activity {
 					.setText(getString(R.string.fifteen_meter_temperature_caption_in_feet));
 			twentyMeterCaption
 					.setText(getString(R.string.twenty_meter_temperature_caption_in_feet));
-		} else if (temperatureUnits
+		} else if (distanceUnits
 				.equals(getString(R.string.pref_distanceUnits_meters))) {
 			oneMeterCaption
 					.setText(getString(R.string.one_meter_temperature_caption));
@@ -179,8 +175,9 @@ public class MainActivity extends Activity {
 		// Handle item selection
 		switch (item.getItemId()) {
 		case R.id.action_settings:
-			// !!! This needs back buttons and possibly ok buttons.
-			startActivity(new Intent(this, SettingsActivity.class));
+			// !!! Possibly ok buttons.
+			// !!! And text to show the current values
+			startActivityForResult(new Intent(this, SettingsActivity.class), SETTINGS_RESPONSE);
 			return true;
 		case R.id.action_update:
 			updateData();
@@ -269,7 +266,7 @@ public class MainActivity extends Activity {
 	}
 
 	private void displayData(Map<String, Double> result) {
-		
+
 		if (result.containsKey(WIND_DIRECTION)) {
 			windDirection.setText(formatWindDirection(result
 					.get(WIND_DIRECTION)));
@@ -313,9 +310,11 @@ public class MainActivity extends Activity {
 			twentyMeterTemperature.setText(formatTemperature(result
 					.get(WATER_TEMP_20)));
 		}
-		if (result.containsKey(TIMESTAMP)){
+		if (result.containsKey(TIMESTAMP)) {
 			Date dateTime = new Date(Math.round(result.get(TIMESTAMP)));
-			updatedAt.setText(getString(R.string.updated_at) + " " + outputDateFormat.format(dateTime));
+//			updatedAt.setText(getString(R.string.updated_at) + " "
+//					+ outputDateFormat.format(dateTime));
+			updatedAt.setText(outputDateFormat.format(dateTime));
 		}
 	}
 
@@ -332,14 +331,10 @@ public class MainActivity extends Activity {
 	}
 
 	// Uses AsyncTask to create a task away from the main UI thread. This task
-	// takes a
-	// URL string and uses it to create an HttpUrlConnection. Once the
-	// connection
-	// has been established, the AsyncTask downloads the contents of the webpage
-	// as
-	// an InputStream. Finally, the InputStream is converted into a string,
-	// which is
-	// displayed in the UI by the AsyncTask's onPostExecute method.
+	// takes a URL string and uses it to create an HttpUrlConnection. Once the
+	// connection has been established, the AsyncTask downloads the contents of the webpage
+	// as an InputStream. Finally, the InputStream is converted into a string,
+	// which is displayed in the UI by the AsyncTask's onPostExecute method.
 	private class DownloadWebpageTask extends
 			AsyncTask<String, Void, Map<String, Double>> {
 		@Override
@@ -439,5 +434,18 @@ public class MainActivity extends Activity {
 			}
 		}
 		return entries;
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Log.e("", "OnActivity Result...");
+		super.onActivityResult(requestCode, resultCode, data);
+
+		switch (requestCode) {
+		case SETTINGS_RESPONSE:
+			setWaterDepthCaptions();
+			updateData();
+			break;
+		}
 	}
 }
