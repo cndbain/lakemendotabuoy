@@ -33,10 +33,12 @@ public final class R {
         public static final int activity_vertical_margin=0x7f070001;
     }
     public static final class drawable {
-        public static final int ic_launcher=0x7f020000;
+        public static final int ic_action_refresh=0x7f020000;
+        public static final int ic_launcher=0x7f020001;
     }
     public static final class id {
-        public static final int action_settings=0x7f0b0012;
+        public static final int action_settings=0x7f0b0013;
+        public static final int action_update=0x7f0b0012;
         public static final int air_temperature=0x7f0b0003;
         public static final int dew_point=0x7f0b0004;
         public static final int fifteen_meter_temperature=0x7f0b000f;
@@ -63,7 +65,8 @@ public final class R {
         public static final int main=0x7f0a0000;
     }
     public static final class string {
-        public static final int action_settings=0x7f08002b;
+        public static final int action_settings=0x7f08002c;
+        public static final int action_update=0x7f08002b;
         public static final int air_temperature_caption=0x7f080005;
         public static final int app_name=0x7f080000;
         public static final int atmosphere=0x7f080001;
@@ -81,18 +84,18 @@ public final class R {
         public static final int one_meter_temperature_caption=0x7f08000a;
         public static final int one_meter_temperature_caption_in_feet=0x7f08000b;
         public static final int percent_suffix=0x7f080028;
-        public static final int pref_distanceUnits=0x7f08002c;
-        public static final int pref_distanceUnits_feet=0x7f08002d;
-        public static final int pref_distanceUnits_meters=0x7f08002e;
-        public static final int pref_temperatureUnits=0x7f08002f;
-        public static final int pref_temperatureUnits_celsius=0x7f080031;
-        public static final int pref_temperatureUnits_fahrenheit=0x7f080030;
-        public static final int pref_updateInterval=0x7f080036;
-        public static final int pref_updateInterval_default=0x7f080037;
-        public static final int pref_windSpeedUnits=0x7f080032;
-        public static final int pref_windSpeedUnits_knots=0x7f080035;
-        public static final int pref_windSpeedUnits_metersPerSecond=0x7f080033;
-        public static final int pref_windSpeedUnits_milesPerHour=0x7f080034;
+        public static final int pref_distanceUnits=0x7f08002d;
+        public static final int pref_distanceUnits_feet=0x7f08002e;
+        public static final int pref_distanceUnits_meters=0x7f08002f;
+        public static final int pref_temperatureUnits=0x7f080030;
+        public static final int pref_temperatureUnits_celsius=0x7f080032;
+        public static final int pref_temperatureUnits_fahrenheit=0x7f080031;
+        public static final int pref_updateInterval=0x7f080037;
+        public static final int pref_updateInterval_default=0x7f080038;
+        public static final int pref_windSpeedUnits=0x7f080033;
+        public static final int pref_windSpeedUnits_knots=0x7f080036;
+        public static final int pref_windSpeedUnits_metersPerSecond=0x7f080034;
+        public static final int pref_windSpeedUnits_milesPerHour=0x7f080035;
         public static final int surface_temperature_caption=0x7f080009;
         public static final int ten_meter_temperature_caption=0x7f08000e;
         public static final int ten_meter_temperature_caption_in_feet=0x7f08000f;

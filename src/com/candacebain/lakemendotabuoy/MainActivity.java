@@ -21,9 +21,11 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.util.Xml;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
@@ -151,7 +153,21 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    // Handle item selection
+	    switch (item.getItemId()) {
+	        case R.id.action_settings:
+	        	startActivity(new Intent(this, SettingsActivity.class));
+	            return true;
+	        case R.id.action_update:
+	        	updateData();
+	            return true;
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
+	}
 	
 	// !!! Finish dealing with the array
 	String formatWindDirection(double windDirectionInDegrees) {
@@ -174,7 +190,7 @@ public class MainActivity extends Activity {
 		}
 
 		// shouldn't ever get here
-		return getString(R.string.unknown_value);
+		return getString( R.string.unknown_value);
 	}
 	
 	private String formatTemperature(double value){
@@ -196,6 +212,8 @@ public class MainActivity extends Activity {
 		
 		return(decimalFormat.format(useValue) + temperatureUnitSuffix).replaceAll("\\G0", " ");
 	}
+	
+	// !!!! Take out the update button
 	
 	private String formatWindSpeed(double value){
 		// What units should we use to display wind speed?
@@ -232,9 +250,8 @@ public class MainActivity extends Activity {
 	
 
 	private void displayData(Map<String, Double> result) {
-		// !!! Add spaces before the wind units, and maybe spaces to make things line up if they're < 10?
+		// !!! I think don't do this, just leave the old one in place and show timestamps
 		
-
 		// Clear old values
 		String unknownValue = getString(R.string.unknown_value);
 		windDirection.setText(unknownValue);
@@ -287,7 +304,7 @@ public class MainActivity extends Activity {
 			twentyMeterTemperature.setText(formatTemperature(result.get(WATER_TEMP_20)));
 		}
 	}
-
+	
 	private void updateData() {
 		// !!! I'll need to figure out how to show error messages
 		// !!! And remember to get the error messages from the resources.

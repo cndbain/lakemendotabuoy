@@ -38,12 +38,13 @@
     <string name="wind_direction_WNW">WNW</string>
     <string name="wind_direction_NW">NW</string>
     <string name="wind_direction_NNW">NNW</string>
-    <string name="miles_per_hour_suffix"> mph</string>
-    <string name="knots_suffix"> knts</string>
-    <string name="meters_per_second_suffix"> m/s</string>
+    <string name="miles_per_hour_suffix">mph</string>
+    <string name="knots_suffix">knts</string>
+    <string name="meters_per_second_suffix">m/s</string>
     <string name="percent_suffix">%</string>
     <string name="fahrenheit_suffix">°F</string>
     <string name="celsius_suffix">°C</string>
+    <string name="action_update">Update</string>
     <string name="action_settings">Settings</string>
     <string name="pref_distanceUnits">Distance Units</string>
     <string name="pref_distanceUnits_feet">Feet</string>
