@@ -39,25 +39,25 @@ public final class R {
     public static final class id {
         public static final int action_settings=0x7f0b0014;
         public static final int action_update=0x7f0b0013;
-        public static final int air_temperature=0x7f0b0003;
-        public static final int dew_point=0x7f0b0005;
-        public static final int fifteen_meter_temperature=0x7f0b000f;
-        public static final int fifteen_meter_temperature_caption=0x7f0b000e;
-        public static final int five_meter_temperature=0x7f0b000b;
-        public static final int five_meter_temperature_caption=0x7f0b000a;
-        public static final int humidity=0x7f0b0004;
-        public static final int one_meter_temperature=0x7f0b0009;
-        public static final int one_meter_temperature_caption=0x7f0b0008;
-        public static final int surface_temperature=0x7f0b0007;
-        public static final int surface_temperature_caption=0x7f0b0006;
-        public static final int ten_meter_temperature=0x7f0b000d;
-        public static final int ten_meter_temperature_caption=0x7f0b000c;
-        public static final int twenty_meter_temperature=0x7f0b0011;
-        public static final int twenty_meter_temperature_caption=0x7f0b0010;
-        public static final int updated_at=0x7f0b0012;
-        public static final int wind_direction=0x7f0b0000;
-        public static final int wind_gust=0x7f0b0002;
-        public static final int wind_speed=0x7f0b0001;
+        public static final int air_temperature=0x7f0b0004;
+        public static final int dew_point=0x7f0b0006;
+        public static final int fifteen_meter_temperature=0x7f0b0010;
+        public static final int fifteen_meter_temperature_caption=0x7f0b000f;
+        public static final int five_meter_temperature=0x7f0b000c;
+        public static final int five_meter_temperature_caption=0x7f0b000b;
+        public static final int humidity=0x7f0b0005;
+        public static final int one_meter_temperature=0x7f0b000a;
+        public static final int one_meter_temperature_caption=0x7f0b0009;
+        public static final int surface_temperature=0x7f0b0008;
+        public static final int surface_temperature_caption=0x7f0b0007;
+        public static final int ten_meter_temperature=0x7f0b000e;
+        public static final int ten_meter_temperature_caption=0x7f0b000d;
+        public static final int twenty_meter_temperature=0x7f0b0012;
+        public static final int twenty_meter_temperature_caption=0x7f0b0011;
+        public static final int updated_at=0x7f0b0000;
+        public static final int wind_direction=0x7f0b0001;
+        public static final int wind_gust=0x7f0b0003;
+        public static final int wind_speed=0x7f0b0002;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
