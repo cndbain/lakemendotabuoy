@@ -150,7 +150,7 @@
 
         <View
             android:layout_width="1dp"
-            android:layout_height="5dp" />
+            android:layout_height="3dp" />
 
         <TextView
             android:layout_width="fill_parent"
@@ -294,7 +294,7 @@
 
         <View
             android:layout_width="1dp"
-            android:layout_height="3dp" />
+            android:layout_height="2dp" />
 
         <TextView
             android:id="@+id/updated_at"

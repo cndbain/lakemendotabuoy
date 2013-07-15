@@ -40,7 +40,7 @@
     <string name="wind_direction_NW">NW</string>
     <string name="wind_direction_NNW">NNW</string>
     <string name="miles_per_hour_suffix">mph</string>
-    <string name="knots_suffix">konts</string>
+    <string name="knots_suffix">knots</string>
     <string name="meters_per_second_suffix">m/s</string>
     <string name="percent_suffix">%</string>
     <string name="fahrenheit_suffix">°F</string>
