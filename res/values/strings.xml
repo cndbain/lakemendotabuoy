@@ -51,6 +51,7 @@
     <string name="percent_suffix">%</string>
     <string name="fahrenheit_suffix">°F</string>
     <string name="celsius_suffix">°C</string>
+    <string name="ok">OK</string>
     <string name="action_update">Update</string>
     <string name="action_settings">Settings</string>
     <string name="action_about">About</string>
@@ -71,16 +72,16 @@
     <string name="pref_updateInterval_300000">Every 5 minutes</string>
     <string name="pref_updateInterval_600000">Every 10 minutes</string>
     <string name="pref_updateInterval_default">60000</string>
-    <string name="pref_display_additional_data">Additional data</string>
-    <string name="pref_display_additional_data_summary">Show all available data</string>
+    <string name="pref_display_additional_data">Show all available data</string>
     <string name="error_cannot_show_data">Cannot update data:</string>
     <string name="error_no_network_connection">No network connection</string>
     <string name="about_app_name">About Lake Mendota Buoy</string>
-    <string name="about_version">Version: </string>
+    <string name="about_version">Version</string>
     <string name="about_author">Author:</string>
     <string name="about_author_value">Candace Bain</string>
-    <string name="about_questions_caption">For questions, comments, and suggestions please create a new issue at:</string>
+    <string name="about_questions_caption">For questions, comments, and suggestions please visit:</string>
     <string name="about_questions_value">https://github.com/cndbain/lakemendotabuoy/issues</string>
-    <string name="about_data_provider">Data provided by Limnology, Space Science and Engineering Center (SSEC) and Environmental Engineering Departments at University of Wisconsin.</string>
+    <string name="about_data_provider">Data provided by Space Science &amp; Engineering Center UW-Madison.</string>
     <string name="about_legal">All rights reserved. Not liable for any damage incurred from use of this software.</string>
+
 </resources>

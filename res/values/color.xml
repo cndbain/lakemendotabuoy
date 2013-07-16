@@ -3,5 +3,5 @@
     <color name="buoy">#FE9A04</color>
     <color name="dark_buoy">#e48a03</color>
     <color name="water">#53B7CB</color>
-    <color name="light_water">#edf7f9</color>
+    <color name="light_water">#c0c0c0</color>
 </resources>

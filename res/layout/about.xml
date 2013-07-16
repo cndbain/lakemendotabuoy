@@ -80,8 +80,26 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:paddingTop="16dp"
-        android:text="@string/about_data_provider"
+        android:text="@string/about_questions_caption"
         android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="8dp"
+        android:text="@string/about_questions_value"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="16dp"
+        android:text="@string/about_data_provider"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
 
     <TextView
         android:layout_width="fill_parent"
@@ -90,7 +108,5 @@
         android:paddingTop="16dp"
         android:text="@string/about_legal"
         android:textSize="12sp" />
-
-
 
 </LinearLayout>

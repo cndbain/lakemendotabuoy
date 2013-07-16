@@ -25,10 +25,10 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.text.Html;
-import android.text.util.Linkify;
 import android.util.Xml;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -547,10 +547,23 @@ public class MainActivity extends Activity {
 	 * Display dialog with information about the application
 	 */
 	private void displayAboutDialog() {
+
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		LayoutInflater inflater = this.getLayoutInflater();
+		// Get the layout inflater
+		LayoutInflater inflater = getLayoutInflater();
+
+		// Inflate and set the layout for the dialog
+		// Pass null as the parent view because its going in the dialog layout
 		builder.setView(inflater.inflate(R.layout.about, null));
-		builder.create();
+		builder.setPositiveButton(R.string.ok,
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						// Just close the dialog
+					}
+				});
+
+		Dialog dialog = builder.create();
+		dialog.show();
 	}
 
 	/**
