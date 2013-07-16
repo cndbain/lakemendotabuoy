@@ -26,7 +26,6 @@ import android.preference.PreferenceManager;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.util.Xml;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,7 +34,6 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
-	private static final String DEBUG_TAG = "LakeMendotaBuoy";
 	private static final int SETTINGS_RESPONSE = 1;
 
 	private static final DecimalFormat decimalFormat = new DecimalFormat(
@@ -91,9 +89,7 @@ public class MainActivity extends Activity {
 
 	private Timer updateTimer;
 
-	// !!! Figure out logging
 	// !!! Clean up
-	// !!! Check in to github
 	// !!! check in to play store - with proper attribution
 	// !!! Honestly, should test on other things running older versions...
 	// !!! Fix up text to promote the app on google play
@@ -182,7 +178,6 @@ public class MainActivity extends Activity {
 	 */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.e("", "OnActivity Result...");
 		super.onActivityResult(requestCode, resultCode, data);
 
 		switch (requestCode) {
@@ -534,8 +529,6 @@ public class MainActivity extends Activity {
 			conn.setDoInput(true);
 			// Starts the query
 			conn.connect();
-			int response = conn.getResponseCode();
-			Log.d(DEBUG_TAG, "The response is: " + response);
 			is = conn.getInputStream();
 
 			XmlPullParser parser = Xml.newPullParser();
