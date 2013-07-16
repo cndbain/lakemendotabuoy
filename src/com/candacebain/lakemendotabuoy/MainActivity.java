@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -28,6 +30,7 @@ import android.util.Log;
 import android.util.Xml;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
@@ -36,7 +39,7 @@ public class MainActivity extends Activity {
 	private static final int SETTINGS_RESPONSE = 1;
 
 	private static final DecimalFormat decimalFormat = new DecimalFormat(
-			"###.0");
+			"##0.0");
 
 	private static final SimpleDateFormat inputDateFormat = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss", Locale.US);
@@ -84,24 +87,116 @@ public class MainActivity extends Activity {
 	private TextView twentyMeterCaption;
 
 	private TextView updatedAt;
+	private ProgressBar updateProgressBar;
+
+	private Timer updateTimer;
 
 	// !!! Figure out logging
-	// !!! Figure out how to automatically update
-	// !!! Figure out how to show an error when anything goes wrong
 	// !!! Clean up
 	// !!! Check in to github
 	// !!! check in to play store - with proper attribution
+	// !!! Honestly, should test on other things running older versions...
+	// !!! Fix up text to promote the app on google play
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onCreate()
+	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		// Get values from resources
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+		if (windDirections == null) {
+			windDirections = getResources().getStringArray(
+					R.array.windDirections);
+		}
 		setContentView(R.layout.activity_main);
+
+		// Set up our views
 		initializeViews();
-		updateData();
 	}
 
-	private void initializeViews() {		
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onPause()
+	 */
+	@Override
+	protected void onPause() {
+		super.onPause();
+		
+		// Stop updating our data
+		stopUpdateTimer();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onResume()
+	 */
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		// Start updating our data
+		startUpdateTimer();
+	}
+	
+	
+	/**
+	 * Set up our options menu
+	 */
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+	/**
+	 * Respond to options actions
+	 */
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.action_settings:
+			// !!! Possibly ok buttons.
+			// !!! And text to show the current values
+			startActivityForResult(new Intent(this, SettingsActivity.class),
+					SETTINGS_RESPONSE);
+			return true;
+		case R.id.action_update:
+			updateData();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+	
+	/**
+	 * If the user has just returned from the settings menu, update our
+	 * measurement units and restart the update timer
+	 */
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Log.e("", "OnActivity Result...");
+		super.onActivityResult(requestCode, resultCode, data);
+
+		switch (requestCode) {
+		case SETTINGS_RESPONSE:
+			setWaterDepthCaptions();
+			startUpdateTimer();
+			break;
+		}
+	}
+
+	/**
+	 * Find the views we want to interact with while the application is running
+	 */
+	private void initializeViews() {
 		inputDateFormat.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
 		windDirection = (TextView) findViewById(R.id.wind_direction);
 		windSpeed = (TextView) findViewById(R.id.wind_speed);
@@ -124,21 +219,19 @@ public class MainActivity extends Activity {
 		twentyMeterCaption = (TextView) findViewById(R.id.twenty_meter_temperature_caption);
 
 		updatedAt = (TextView) findViewById(R.id.updated_at);
+		updateProgressBar = (ProgressBar) findViewById(R.id.update_progress_bar);
 
 		setWaterDepthCaptions();
-
-		if (windDirections == null) {
-			windDirections = getResources().getStringArray(
-					R.array.windDirections);
-		}
 	}
 
+	/**
+	 * Changes the water depth captions based on the user's preferred distance
+	 * units
+	 */
 	private void setWaterDepthCaptions() {
-		String distanceUnits = PreferenceManager
-				.getDefaultSharedPreferences(this).getString(
-						SettingsActivity.KEY_PREF_DISTANCE_UNITS, "");
-		if (distanceUnits
-				.equals(getString(R.string.pref_distanceUnits_feet))) {
+		String distanceUnits = PreferenceManager.getDefaultSharedPreferences(
+				this).getString(SettingsActivity.KEY_PREF_DISTANCE_UNITS, "");
+		if (distanceUnits.equals(getString(R.string.pref_distanceUnits_feet))) {
 			oneMeterCaption
 					.setText(getString(R.string.one_meter_temperature_caption_in_feet));
 			fiveMeterCaption
@@ -164,29 +257,46 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
+	/**
+	 * Sets up a timer to update the data on the schedule preferred by the user
+	 */
+	private void startUpdateTimer() {
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle item selection
-		switch (item.getItemId()) {
-		case R.id.action_settings:
-			// !!! Possibly ok buttons.
-			// !!! And text to show the current values
-			startActivityForResult(new Intent(this, SettingsActivity.class), SETTINGS_RESPONSE);
-			return true;
-		case R.id.action_update:
+		stopUpdateTimer();
+		updateTimer = new Timer();
+
+		int updateInterval = Integer.parseInt(PreferenceManager
+				.getDefaultSharedPreferences(this).getString(
+						SettingsActivity.KEY_PREF_UPDATE_INTERVAL, ""));
+		if (updateInterval > 0) {
+			// Update data now and at the interval specified by the user
+			updateTimer.schedule(new TimerTask() {
+				@Override
+				public void run() {
+					updateData();
+				}
+
+			}, 0, updateInterval);
+		} else {
 			updateData();
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
 		}
 	}
 
+	/**
+	 * Stop updating when we're no longer focused on this view
+	 */
+	private void stopUpdateTimer() {
+		if (updateTimer != null) {
+			updateTimer.cancel();
+			updateTimer = null;
+		}
+	}
+
+	/**
+	 * Format the wind direction value
+	 * @param windDirectionInDegrees
+	 * @return
+	 */
 	String formatWindDirection(double windDirectionInDegrees) {
 		if (windDirectionInDegrees <= 0 || windDirectionInDegrees > 360) {
 			return getString(R.string.unknown_value);
@@ -210,6 +320,11 @@ public class MainActivity extends Activity {
 		return getString(R.string.unknown_value);
 	}
 
+	/**
+	 * Format the temperature value according to the user's preferences, converting units if necessary
+	 * @param windDirectionInDegrees
+	 * @return
+	 */
 	private String formatTemperature(double value) {
 		// What units should we use to display temperature?
 		String temperatureUnits = PreferenceManager
@@ -231,6 +346,11 @@ public class MainActivity extends Activity {
 		return (decimalFormat.format(useValue) + temperatureUnitSuffix);
 	}
 
+	/**
+	 * Format the wind speed according to the user's preferences, converting units if necessary
+	 * @param value
+	 * @return
+	 */
 	private String formatWindSpeed(double value) {
 		// What units should we use to display wind speed?
 		String windSpeedUnits = PreferenceManager.getDefaultSharedPreferences(
@@ -260,13 +380,21 @@ public class MainActivity extends Activity {
 		return (decimalFormat.format(useValue) + windSpeedUnitSuffix);
 	}
 
+	/**
+	 * Format the humidity value for display
+	 * @param value
+	 * @return
+	 */
 	private String formatHumidity(double value) {
 		String humidityUnitSuffix = getString(R.string.percent_suffix);
 		return (decimalFormat.format(value) + " " + humidityUnitSuffix);
 	}
 
+	/**
+	 * Display the data returned from the service
+	 * @param result
+	 */
 	private void displayData(Map<String, Double> result) {
-
 		if (result.containsKey(WIND_DIRECTION)) {
 			windDirection.setText(formatWindDirection(result
 					.get(WIND_DIRECTION)));
@@ -312,63 +440,79 @@ public class MainActivity extends Activity {
 		}
 		if (result.containsKey(TIMESTAMP)) {
 			Date dateTime = new Date(Math.round(result.get(TIMESTAMP)));
-//			updatedAt.setText(getString(R.string.updated_at) + " "
-//					+ outputDateFormat.format(dateTime));
 			updatedAt.setText(outputDateFormat.format(dateTime));
 		}
 	}
 
+	/**
+	 * Connect to the web service, download and parse the data
+	 */
 	private void updateData() {
-		// !!! I'll need to figure out how to show error messages
-		// !!! And remember to get the error messages from the resources.
 		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 		if (networkInfo != null && networkInfo.isConnected()) {
-			new DownloadWebpageTask().execute(dataQueryURL);
+			updateProgressBar.setVisibility(android.view.View.VISIBLE);
+			new DownloadDataTask().execute();
 		} else {
-			// !!! display error
+			// TODO display error
+			// !!! And remember to get the error messages from the resources?
 		}
 	}
+	
+	/**
+	 * Uses AsyncTask to download the data away from the main thread.
+	 */
+	private class DownloadDataTask extends
+			AsyncTask<Void, Void, Map<String, Double>> {
+		
+		Throwable throwable = null;
 
-	// Uses AsyncTask to create a task away from the main UI thread. This task
-	// takes a URL string and uses it to create an HttpUrlConnection. Once the
-	// connection has been established, the AsyncTask downloads the contents of the webpage
-	// as an InputStream. Finally, the InputStream is converted into a string,
-	// which is displayed in the UI by the AsyncTask's onPostExecute method.
-	private class DownloadWebpageTask extends
-			AsyncTask<String, Void, Map<String, Double>> {
 		@Override
-		protected Map<String, Double> doInBackground(String... urls) {
-
-			// params comes from the execute() call: params[0] is the url.
+		protected Map<String, Double> doInBackground(Void... params) {
 			try {
-				// !!! Here set a spinner going
-				return downloadUrl(urls[0]);
+				return downloadData();
 			} catch (IOException e) {
-				// !!! Have to figure out what to do with exceptions/error
-				// handling
-				// return "Unable to retrieve web page. URL may be invalid.";
-				return new HashMap<String, Double>();
+				throwable = e;
+				return null;
+			} catch (ParseException e) {
+				throwable = e;
+				return null;
+			} catch (XmlPullParserException e) {
+				throwable = e;
+				return null;
 			}
 		}
 
-		// onPostExecute displays the results of the AsyncTask.
+		/**
+		 * onPostExecute displays the results of the AsyncTask.
+		 */
 		@Override
 		protected void onPostExecute(Map<String, Double> result) {
-			displayData(result);
-			// !!! Here stop the spinner (Does this happen no matter what? Where
-			// to show error?)
+			if (throwable == null){
+				displayData(result);
+			}
+			else {
+				// TODO display error
+				// !!! if reuse update string, change the text color?  Then remember to set it back when actually show the time
+				// !!! Set error message here
+			}
+
+			updateProgressBar.setVisibility(android.view.View.INVISIBLE);
 		}
 	}
 
-	// Given a URL, establishes an HttpUrlConnection, parses the XML, returns a
-	// key->value pair for the latest buoy data.
-	// !!! Can just use the hard coded URL instead of passing this in?
-	private Map<String, Double> downloadUrl(String myurl) throws IOException {
+	/**
+	 * Connects to the metobs web service, downloads data in XML, returns the most recent values in a string key -> double value map
+	 * @return
+	 * @throws IOException
+	 * @throws ParseException 
+	 * @throws XmlPullParserException 
+	 */
+	private Map<String, Double> downloadData() throws IOException, ParseException, XmlPullParserException {
 		InputStream is = null;
 		Map<String, Double> entries = new HashMap<String, Double>();
 		try {
-			URL url = new URL(myurl);
+			URL url = new URL(dataQueryURL);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setReadTimeout(10000 /* milliseconds */);
 			conn.setConnectTimeout(15000 /* milliseconds */);
@@ -420,12 +564,6 @@ public class MainActivity extends Activity {
 					break;
 				}
 			}
-		} catch (XmlPullParserException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} finally {
 			// Makes sure that the InputStream is closed after the app is
 			// finished using it.
@@ -434,18 +572,5 @@ public class MainActivity extends Activity {
 			}
 		}
 		return entries;
-	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.e("", "OnActivity Result...");
-		super.onActivityResult(requestCode, resultCode, data);
-
-		switch (requestCode) {
-		case SETTINGS_RESPONSE:
-			setWaterDepthCaptions();
-			updateData();
-			break;
-		}
 	}
 }
