@@ -20,6 +20,7 @@ public final class R {
     }
     public static final class color {
         public static final int buoy=0x7f060000;
+        public static final int light_grey=0x7f060002;
         public static final int water=0x7f060001;
     }
     public static final class dimen {
@@ -74,6 +75,8 @@ public final class R {
         public static final int atmosphere=0x7f080001;
         public static final int celsius_suffix=0x7f08002b;
         public static final int dew_point_caption=0x7f080006;
+        public static final int error_cannot_show_data=0x7f08003f;
+        public static final int error_no_network_connection=0x7f080040;
         public static final int fahrenheit_suffix=0x7f08002a;
         public static final int fifteen_meter_temperature_caption=0x7f080010;
         public static final int fifteen_meter_temperature_caption_in_feet=0x7f080011;

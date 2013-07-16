@@ -58,11 +58,13 @@
     <string name="pref_windSpeedUnits_milesPerHour">Miles Per Hour</string>
     <string name="pref_windSpeedUnits_knots">Knots</string>
     <string name="pref_updateInterval">Update Interval</string>
-    <string name="pref_updateInterval_0">Update when button pushed</string>
+    <string name="pref_updateInterval_0">When update pressed</string>
     <string name="pref_updateInterval_60000">Every minute</string>
-   	<string name="pref_updateInterval_180000">Every 3 minutes</string>
+    <string name="pref_updateInterval_180000">Every 3 minutes</string>
     <string name="pref_updateInterval_300000">Every 5 minutes</string>
     <string name="pref_updateInterval_600000">Every 10 minutes</string>
     <string name="pref_updateInterval_default">60000</string>
+    <string name="error_cannot_show_data">Cannot show data:</string>
+    <string name="error_no_network_connection">No network connection</string>
 
 </resources>

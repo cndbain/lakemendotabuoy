@@ -31,22 +31,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
-	private static final int SETTINGS_RESPONSE = 1;
-
-	private static final DecimalFormat decimalFormat = new DecimalFormat(
-			"##0.0");
-
-	private static final SimpleDateFormat inputDateFormat = new SimpleDateFormat(
-			"yyyy-MM-dd HH:mm:ss", Locale.US);
-	private static final SimpleDateFormat outputDateFormat = new SimpleDateFormat(
-			"MMM dd, yyyy h:mm a", Locale.US);
-
+	/**
+	 * The source of all our data
+	 */
 	private static final String dataQueryURL = "http://metobs.ssec.wisc.edu/app/mendota/buoy/data/xml?symbols=t:rh:td:spd:dir:gust:wt_0.0:wt_1.0:wt_5.0:wt_10.0:wt_15.0:wt_20.0";
 
-	// The data identifiers from the metobs XML
+	/**
+	 * The data identifiers from the metobs XML
+	 */
 	private static final String AIR_TEMP = "AIR_TEMP";
 	private static final String REL_HUM = "REL_HUM";
 	private static final String DEWPOINT_CALC = "DEWPOINT_CALC";
@@ -61,9 +57,34 @@ public class MainActivity extends Activity {
 	private static final String WATER_TEMP_10 = "WATER_TEMP_10.0";
 	private static final String WATER_TEMP_15 = "WATER_TEMP_15.0";
 	private static final String WATER_TEMP_20 = "WATER_TEMP_20.0";
+	
+	/**
+	 * Used to know when we've returned from the settings view
+	 */
+	private static final int SETTINGS_RESPONSE = 1;
 
+	/**
+	 * Format double values for display
+	 */
+	private static final DecimalFormat decimalFormat = new DecimalFormat(
+			"##0.0");
+
+	/**
+	 * Parse and format date values
+	 */
+	private static final SimpleDateFormat inputDateFormat = new SimpleDateFormat(
+			"yyyy-MM-dd HH:mm:ss", Locale.US);
+	private static final SimpleDateFormat outputDateFormat = new SimpleDateFormat(
+			"MMM dd, yyyy h:mm a", Locale.US);
+
+	/**
+	 * Wind directions text array
+	 */
 	private String[] windDirections = null;
 
+	/**
+	 * Views we might want to interact with
+	 */
 	private TextView windDirection;
 	private TextView windSpeed;
 	private TextView windGust;
@@ -88,12 +109,6 @@ public class MainActivity extends Activity {
 	private ProgressBar updateProgressBar;
 
 	private Timer updateTimer;
-
-	// !!! Clean up
-	// !!! check in to play store - with proper attribution
-	// !!! Honestly, should test on other things running older versions...
-	// !!! Fix up text to promote the app on google play
-	// !!! test what happens with errors
 
 	/*
 	 * (non-Javadoc)
@@ -159,8 +174,6 @@ public class MainActivity extends Activity {
 		// Handle item selection
 		switch (item.getItemId()) {
 		case R.id.action_settings:
-			// !!! Possibly ok buttons.
-			// !!! And text to show the current values
 			startActivityForResult(new Intent(this, SettingsActivity.class),
 					SETTINGS_RESPONSE);
 			return true;
@@ -451,6 +464,17 @@ public class MainActivity extends Activity {
 	}
 
 	/**
+	 * Something went wrong, tell the user what
+	 * @param message
+	 */
+	private void displayError(String message) {
+		Context context = getApplicationContext();
+		int duration = Toast.LENGTH_LONG;
+		Toast toast = Toast.makeText(context, message, duration);
+		toast.show();
+	}
+	
+	/**
 	 * Connect to the web service, download and parse the data
 	 */
 	private void updateData() {
@@ -460,8 +484,7 @@ public class MainActivity extends Activity {
 			updateProgressBar.setVisibility(android.view.View.VISIBLE);
 			new DownloadDataTask().execute();
 		} else {
-			// TODO display error
-			// !!! And remember to get the error messages from the resources?
+			displayError(getString(R.string.error_cannot_show_data) + "\n" + getString(R.string.error_no_network_connection));
 		}
 	}
 
@@ -497,12 +520,9 @@ public class MainActivity extends Activity {
 			if (throwable == null) {
 				displayData(result);
 			} else {
-				// TODO display error
-				// !!! if reuse update string, change the text color? Then
-				// remember to set it back when actually show the time
-				// !!! Set error message here
+				// !!! Test this.
+				displayError(getString(R.string.error_cannot_show_data) + "\n" + throwable.getMessage());
 			}
-
 			updateProgressBar.setVisibility(android.view.View.INVISIBLE);
 		}
 	}
