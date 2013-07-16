@@ -24,9 +24,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.text.Html;
+import android.text.util.Linkify;
 import android.util.Xml;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -59,14 +63,13 @@ public class MainActivity extends Activity {
 	private static final String WATER_TEMP_10 = "WATER_TEMP_10.0";
 	private static final String WATER_TEMP_15 = "WATER_TEMP_15.0";
 	private static final String WATER_TEMP_20 = "WATER_TEMP_20.0";
-	
+
 	private static final String DEWPOINT_CALC = "DEWPOINT_CALC";
 	private static final String DO_SAT = "DO_SAT";
 	private static final String DO_PPM = "DO_PPM";
 	private static final String CHLOROPHYLL = "CHLOROPHYLL_0.4";
 	private static final String PHYCOCYANIN = "PHYCOCYANIN_0.4";
-	
-	
+
 	/**
 	 * Used to know when we've returned from the settings view
 	 */
@@ -112,13 +115,13 @@ public class MainActivity extends Activity {
 	private TextView tenMeterCaption;
 	private TextView fifteenMeterCaption;
 	private TextView twentyMeterCaption;
-	
+
 	private TextView dewPoint;
 	private TextView dissolvedOxygen;
 	private TextView dissolvedOxygenSaturation;
 	private TextView chlorophyll;
 	private TextView phycocyanin;
-	
+
 	private TextView additionalDataCaption;
 	private View additionalDataLine;
 	private TableLayout additionalDataTable;
@@ -195,6 +198,9 @@ public class MainActivity extends Activity {
 			startActivityForResult(new Intent(this, SettingsActivity.class),
 					SETTINGS_RESPONSE);
 			return true;
+		case R.id.action_about:
+			displayAboutDialog();
+			return true;
 		case R.id.action_update:
 			updateData();
 			return true;
@@ -243,13 +249,13 @@ public class MainActivity extends Activity {
 		tenMeterCaption = (TextView) findViewById(R.id.ten_meter_temperature_caption);
 		fifteenMeterCaption = (TextView) findViewById(R.id.fifteen_meter_temperature_caption);
 		twentyMeterCaption = (TextView) findViewById(R.id.twenty_meter_temperature_caption);
-		
+
 		dewPoint = (TextView) findViewById(R.id.dew_point);
 		dissolvedOxygen = (TextView) findViewById(R.id.dissolved_oxygen);
-		dissolvedOxygenSaturation =  (TextView) findViewById(R.id.dissolved_oxygen_saturation);
+		dissolvedOxygenSaturation = (TextView) findViewById(R.id.dissolved_oxygen_saturation);
 		chlorophyll = (TextView) findViewById(R.id.chlorophyll);
 		phycocyanin = (TextView) findViewById(R.id.phycocyanin);
-		
+
 		additionalDataCaption = (TextView) findViewById(R.id.additional_data_caption);
 		additionalDataLine = (View) findViewById(R.id.additional_data_line);
 		additionalDataTable = (TableLayout) findViewById(R.id.additional_data_table);
@@ -293,19 +299,21 @@ public class MainActivity extends Activity {
 					.setText(getString(R.string.twenty_meter_temperature_caption));
 		}
 	}
-	
+
 	/**
-	 * Changes the visibility of the additional data based on the user's preferences
+	 * Changes the visibility of the additional data based on the user's
+	 * preferences
 	 */
 	private void setAdditionalDataVisibility() {
-		boolean showAdditionalData = PreferenceManager.getDefaultSharedPreferences(
-				this).getBoolean(SettingsActivity.KEY_PREF_DISPLAY_ADDITIONAL_DATA, false);
-		if (showAdditionalData){
+		boolean showAdditionalData = PreferenceManager
+				.getDefaultSharedPreferences(this).getBoolean(
+						SettingsActivity.KEY_PREF_DISPLAY_ADDITIONAL_DATA,
+						false);
+		if (showAdditionalData) {
 			additionalDataCaption.setVisibility(android.view.View.VISIBLE);
 			additionalDataLine.setVisibility(android.view.View.VISIBLE);
 			additionalDataTable.setVisibility(android.view.View.VISIBLE);
-		}
-		else {
+		} else {
 			additionalDataCaption.setVisibility(android.view.View.GONE);
 			additionalDataLine.setVisibility(android.view.View.GONE);
 			additionalDataTable.setVisibility(android.view.View.GONE);
@@ -504,21 +512,18 @@ public class MainActivity extends Activity {
 		if (result.containsKey(DEWPOINT_CALC)) {
 			dewPoint.setText(formatTemperature(result.get(DEWPOINT_CALC)));
 		}
-		if (result.containsKey(DO_SAT)){
-			dissolvedOxygen.setText(decimalFormat.format(result
-					.get(DO_SAT)));
+		if (result.containsKey(DO_SAT)) {
+			dissolvedOxygen.setText(decimalFormat.format(result.get(DO_SAT)));
 		}
-		if (result.containsKey(DO_PPM)){
+		if (result.containsKey(DO_PPM)) {
 			dissolvedOxygenSaturation.setText(decimalFormat.format(result
 					.get(DO_PPM)));
 		}
-		if (result.containsKey(CHLOROPHYLL)){
-			chlorophyll.setText(decimalFormat.format(result
-					.get(CHLOROPHYLL)));
+		if (result.containsKey(CHLOROPHYLL)) {
+			chlorophyll.setText(decimalFormat.format(result.get(CHLOROPHYLL)));
 		}
-		if (result.containsKey(PHYCOCYANIN)){
-			phycocyanin.setText(decimalFormat.format(result
-					.get(PHYCOCYANIN)));
+		if (result.containsKey(PHYCOCYANIN)) {
+			phycocyanin.setText(decimalFormat.format(result.get(PHYCOCYANIN)));
 		}
 		if (result.containsKey(TIMESTAMP)) {
 			Date dateTime = new Date(Math.round(result.get(TIMESTAMP)));
@@ -528,6 +533,7 @@ public class MainActivity extends Activity {
 
 	/**
 	 * Something went wrong, tell the user what
+	 * 
 	 * @param message
 	 */
 	private void displayError(String message) {
@@ -536,7 +542,17 @@ public class MainActivity extends Activity {
 		Toast toast = Toast.makeText(context, message, duration);
 		toast.show();
 	}
-	
+
+	/**
+	 * Display dialog with information about the application
+	 */
+	private void displayAboutDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		LayoutInflater inflater = this.getLayoutInflater();
+		builder.setView(inflater.inflate(R.layout.about, null));
+		builder.create();
+	}
+
 	/**
 	 * Connect to the web service, download and parse the data
 	 */
@@ -547,7 +563,8 @@ public class MainActivity extends Activity {
 			updateProgressBar.setVisibility(android.view.View.VISIBLE);
 			new DownloadDataTask().execute();
 		} else {
-			displayError(getString(R.string.error_cannot_show_data) + "\n" + getString(R.string.error_no_network_connection));
+			displayError(getString(R.string.error_cannot_show_data) + "\n"
+					+ getString(R.string.error_no_network_connection));
 		}
 	}
 
@@ -583,7 +600,8 @@ public class MainActivity extends Activity {
 			if (throwable == null) {
 				displayData(result);
 			} else {
-				displayError(getString(R.string.error_cannot_show_data) + "\n" + throwable.getMessage());
+				displayError(getString(R.string.error_cannot_show_data) + "\n"
+						+ throwable.getMessage());
 			}
 			updateProgressBar.setVisibility(android.view.View.INVISIBLE);
 		}

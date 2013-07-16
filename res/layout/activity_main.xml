@@ -41,7 +41,7 @@
                 android:gravity="right"
                 android:text="@string/updated_at"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/buoy" />
+                android:textColor="@color/dark_buoy" />
         </LinearLayout>
 
         <TextView
@@ -49,13 +49,13 @@
             android:layout_height="wrap_content"
             android:text="@string/atmosphere"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/buoy"
+            android:textColor="@color/dark_buoy"
             android:textStyle="bold" />
 
         <View
             android:layout_width="fill_parent"
             android:layout_height="1dp"
-            android:background="@color/buoy" />
+            android:background="@color/dark_buoy" />
 
         <TableLayout
             android:layout_width="fill_parent"
@@ -84,7 +84,7 @@
 
             <TableRow
                 android:layout_height="1dp"
-                android:background="@color/water" >
+                android:background="@color/light_water" >
 
                 <TextView
                     android:layout_width="fill_parent"
@@ -114,7 +114,7 @@
 
             <TableRow
                 android:layout_height="1dp"
-                android:background="@color/water" >
+                android:background="@color/light_water" >
 
                 <TextView
                     android:layout_width="fill_parent"
@@ -144,7 +144,7 @@
 
             <TableRow
                 android:layout_height="1dp"
-                android:background="@color/water" >
+                android:background="@color/light_water" >
 
                 <TextView
                     android:layout_width="fill_parent"
@@ -174,7 +174,7 @@
 
             <TableRow
                 android:layout_height="1dp"
-                android:background="@color/water" >
+                android:background="@color/light_water" >
 
                 <TextView
                     android:layout_width="fill_parent"
@@ -212,13 +212,13 @@
             android:layout_height="wrap_content"
             android:text="@string/water_temperature"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/buoy"
+            android:textColor="@color/dark_buoy"
             android:textStyle="bold" />
 
         <View
             android:layout_width="fill_parent"
             android:layout_height="1dp"
-            android:background="@color/buoy" />
+            android:background="@color/dark_buoy" />
 
         <TableLayout
             android:layout_width="fill_parent"
@@ -248,7 +248,7 @@
 
             <TableRow
                 android:layout_height="1dp"
-                android:background="@color/water" >
+                android:background="@color/light_water" >
 
                 <TextView
                     android:layout_width="fill_parent"
@@ -279,7 +279,7 @@
 
             <TableRow
                 android:layout_height="1dp"
-                android:background="@color/water" >
+                android:background="@color/light_water" >
 
                 <TextView
                     android:layout_width="fill_parent"
@@ -310,7 +310,7 @@
 
             <TableRow
                 android:layout_height="1dp"
-                android:background="@color/water" >
+                android:background="@color/light_water" >
 
                 <TextView
                     android:layout_width="fill_parent"
@@ -341,7 +341,7 @@
 
             <TableRow
                 android:layout_height="1dp"
-                android:background="@color/water" >
+                android:background="@color/light_water" >
 
                 <TextView
                     android:layout_width="fill_parent"
@@ -372,7 +372,7 @@
 
             <TableRow
                 android:layout_height="1dp"
-                android:background="@color/water" >
+                android:background="@color/light_water" >
 
                 <TextView
                     android:layout_width="fill_parent"
@@ -408,7 +408,7 @@
             android:layout_height="wrap_content"
             android:text="@string/additional"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/buoy"
+            android:textColor="@color/dark_buoy"
             android:textStyle="bold"
             android:visibility="gone" />
 
@@ -416,7 +416,7 @@
             android:id="@+id/additional_data_line"
             android:layout_width="fill_parent"
             android:layout_height="1dp"
-            android:background="@color/buoy"
+            android:background="@color/dark_buoy"
             android:visibility="gone" />
 
         <TableLayout
@@ -448,7 +448,7 @@
 
             <TableRow
                 android:layout_height="1dp"
-                android:background="@color/water" >
+                android:background="@color/light_water" >
 
                 <TextView
                     android:layout_width="fill_parent"
@@ -478,7 +478,7 @@
 
             <TableRow
                 android:layout_height="1dp"
-                android:background="@color/water" >
+                android:background="@color/light_water" >
 
                 <TextView
                     android:layout_width="fill_parent"
@@ -508,7 +508,7 @@
 
             <TableRow
                 android:layout_height="1dp"
-                android:background="@color/water" >
+                android:background="@color/light_water" >
 
                 <TextView
                     android:layout_width="fill_parent"
@@ -538,7 +538,7 @@
 
             <TableRow
                 android:layout_height="1dp"
-                android:background="@color/water" >
+                android:background="@color/light_water" >
 
                 <TextView
                     android:layout_width="fill_parent"

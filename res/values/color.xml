@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <color name="buoy">#FE9A04</color>
+    <color name="dark_buoy">#e48a03</color>
     <color name="water">#53B7CB</color>
-    <color name="light_grey">#CCCCCC</color>
-    
+    <color name="light_water">#edf7f9</color>
 </resources>
