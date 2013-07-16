@@ -29,7 +29,9 @@ import android.content.Intent;
 import android.util.Xml;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,14 +40,14 @@ public class MainActivity extends Activity {
 	/**
 	 * The source of all our data
 	 */
-	private static final String dataQueryURL = "http://metobs.ssec.wisc.edu/app/mendota/buoy/data/xml?symbols=t:rh:td:spd:dir:gust:wt_0.0:wt_1.0:wt_5.0:wt_10.0:wt_15.0:wt_20.0";
+	private static final String dataQueryURL = "http://metobs.ssec.wisc.edu/app/mendota/buoy/data/xml?symbols=t:rh:td:spd:dir:gust:wt_0.0:wt_1.0:wt_5.0:wt_10.0:wt_15.0:wt_20.0:do_ppm:do_sat:chlor:pc";
 
 	/**
 	 * The data identifiers from the metobs XML
 	 */
 	private static final String AIR_TEMP = "AIR_TEMP";
 	private static final String REL_HUM = "REL_HUM";
-	private static final String DEWPOINT_CALC = "DEWPOINT_CALC";
+
 	private static final String WIND_SPEED = "WIND_SPEED_2.0";
 	private static final String WIND_DIRECTION = "WIND_DIRECTION_2.0";
 	private static final String WIND_GUST = "WIND_GUST";
@@ -57,6 +59,13 @@ public class MainActivity extends Activity {
 	private static final String WATER_TEMP_10 = "WATER_TEMP_10.0";
 	private static final String WATER_TEMP_15 = "WATER_TEMP_15.0";
 	private static final String WATER_TEMP_20 = "WATER_TEMP_20.0";
+	
+	private static final String DEWPOINT_CALC = "DEWPOINT_CALC";
+	private static final String DO_SAT = "DO_SAT";
+	private static final String DO_PPM = "DO_PPM";
+	private static final String CHLOROPHYLL = "CHLOROPHYLL_0.4";
+	private static final String PHYCOCYANIN = "PHYCOCYANIN_0.4";
+	
 	
 	/**
 	 * Used to know when we've returned from the settings view
@@ -89,7 +98,6 @@ public class MainActivity extends Activity {
 	private TextView windSpeed;
 	private TextView windGust;
 	private TextView airTemperature;
-	private TextView dewPoint;
 	private TextView humidity;
 
 	private TextView surfaceTemperature;
@@ -104,6 +112,16 @@ public class MainActivity extends Activity {
 	private TextView tenMeterCaption;
 	private TextView fifteenMeterCaption;
 	private TextView twentyMeterCaption;
+	
+	private TextView dewPoint;
+	private TextView dissolvedOxygen;
+	private TextView dissolvedOxygenSaturation;
+	private TextView chlorophyll;
+	private TextView phycocyanin;
+	
+	private TextView additionalDataCaption;
+	private View additionalDataLine;
+	private TableLayout additionalDataTable;
 
 	private TextView updatedAt;
 	private ProgressBar updateProgressBar;
@@ -196,6 +214,7 @@ public class MainActivity extends Activity {
 		switch (requestCode) {
 		case SETTINGS_RESPONSE:
 			setWaterDepthCaptions();
+			setAdditionalDataVisibility();
 			startUpdateTimer();
 			break;
 		}
@@ -210,7 +229,6 @@ public class MainActivity extends Activity {
 		windSpeed = (TextView) findViewById(R.id.wind_speed);
 		windGust = (TextView) findViewById(R.id.wind_gust);
 		airTemperature = (TextView) findViewById(R.id.air_temperature);
-		dewPoint = (TextView) findViewById(R.id.dew_point);
 		humidity = (TextView) findViewById(R.id.humidity);
 
 		surfaceTemperature = (TextView) findViewById(R.id.surface_temperature);
@@ -225,11 +243,22 @@ public class MainActivity extends Activity {
 		tenMeterCaption = (TextView) findViewById(R.id.ten_meter_temperature_caption);
 		fifteenMeterCaption = (TextView) findViewById(R.id.fifteen_meter_temperature_caption);
 		twentyMeterCaption = (TextView) findViewById(R.id.twenty_meter_temperature_caption);
+		
+		dewPoint = (TextView) findViewById(R.id.dew_point);
+		dissolvedOxygen = (TextView) findViewById(R.id.dissolved_oxygen);
+		dissolvedOxygenSaturation =  (TextView) findViewById(R.id.dissolved_oxygen_saturation);
+		chlorophyll = (TextView) findViewById(R.id.chlorophyll);
+		phycocyanin = (TextView) findViewById(R.id.phycocyanin);
+		
+		additionalDataCaption = (TextView) findViewById(R.id.additional_data_caption);
+		additionalDataLine = (View) findViewById(R.id.additional_data_line);
+		additionalDataTable = (TableLayout) findViewById(R.id.additional_data_table);
 
 		updatedAt = (TextView) findViewById(R.id.updated_at);
 		updateProgressBar = (ProgressBar) findViewById(R.id.update_progress_bar);
 
 		setWaterDepthCaptions();
+		setAdditionalDataVisibility();
 	}
 
 	/**
@@ -262,6 +291,24 @@ public class MainActivity extends Activity {
 					.setText(getString(R.string.fifteen_meter_temperature_caption));
 			twentyMeterCaption
 					.setText(getString(R.string.twenty_meter_temperature_caption));
+		}
+	}
+	
+	/**
+	 * Changes the visibility of the additional data based on the user's preferences
+	 */
+	private void setAdditionalDataVisibility() {
+		boolean showAdditionalData = PreferenceManager.getDefaultSharedPreferences(
+				this).getBoolean(SettingsActivity.KEY_PREF_DISPLAY_ADDITIONAL_DATA, false);
+		if (showAdditionalData){
+			additionalDataCaption.setVisibility(android.view.View.VISIBLE);
+			additionalDataLine.setVisibility(android.view.View.VISIBLE);
+			additionalDataTable.setVisibility(android.view.View.VISIBLE);
+		}
+		else {
+			additionalDataCaption.setVisibility(android.view.View.GONE);
+			additionalDataLine.setVisibility(android.view.View.GONE);
+			additionalDataTable.setVisibility(android.view.View.GONE);
 		}
 	}
 
@@ -427,9 +474,6 @@ public class MainActivity extends Activity {
 		if (result.containsKey(AIR_TEMP)) {
 			airTemperature.setText(formatTemperature(result.get(AIR_TEMP)));
 		}
-		if (result.containsKey(DEWPOINT_CALC)) {
-			dewPoint.setText(formatTemperature(result.get(DEWPOINT_CALC)));
-		}
 		if (result.containsKey(REL_HUM)) {
 			humidity.setText(formatHumidity(result.get(REL_HUM)));
 		}
@@ -456,6 +500,25 @@ public class MainActivity extends Activity {
 		if (result.containsKey(WATER_TEMP_20)) {
 			twentyMeterTemperature.setText(formatTemperature(result
 					.get(WATER_TEMP_20)));
+		}
+		if (result.containsKey(DEWPOINT_CALC)) {
+			dewPoint.setText(formatTemperature(result.get(DEWPOINT_CALC)));
+		}
+		if (result.containsKey(DO_SAT)){
+			dissolvedOxygen.setText(decimalFormat.format(result
+					.get(DO_SAT)));
+		}
+		if (result.containsKey(DO_PPM)){
+			dissolvedOxygenSaturation.setText(decimalFormat.format(result
+					.get(DO_PPM)));
+		}
+		if (result.containsKey(CHLOROPHYLL)){
+			chlorophyll.setText(decimalFormat.format(result
+					.get(CHLOROPHYLL)));
+		}
+		if (result.containsKey(PHYCOCYANIN)){
+			phycocyanin.setText(decimalFormat.format(result
+					.get(PHYCOCYANIN)));
 		}
 		if (result.containsKey(TIMESTAMP)) {
 			Date dateTime = new Date(Math.round(result.get(TIMESTAMP)));
@@ -579,7 +642,7 @@ public class MainActivity extends Activity {
 									.parse(values[values.length - 1]);
 							entries.put(dataType, (double) dateTime.getTime());
 						} else {
-							// Store double value
+							// Store most recent double value
 							entries.put(dataType, Double
 									.parseDouble(values[values.length - 1]));
 						}

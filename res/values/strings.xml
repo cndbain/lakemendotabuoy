@@ -7,7 +7,6 @@
     <string name="wind_speed_caption">Wind speed</string>
     <string name="wind_gust_caption">Wind gust</string>
     <string name="air_temperature_caption">Temperature</string>
-    <string name="dew_point_caption">Dew point</string>
     <string name="humidity_caption">Humidity</string>
     <string name="water_temperature">Water Temperature</string>
     <string name="surface_temperature_caption">Surface</string>
@@ -21,6 +20,12 @@
     <string name="fifteen_meter_temperature_caption_in_feet">-49.2 feet</string>
     <string name="twenty_meter_temperature_caption">-20 meters</string>
     <string name="twenty_meter_temperature_caption_in_feet">-65.6 feet</string>
+    <string name="additional">Additional</string>
+    <string name="dew_point_caption">Dew point</string>
+    <string name="dissolved_oxygen_caption">Oxygen</string>
+    <string name="dissolved_oxygen_saturation_caption">Oxygen saturation</string>
+    <string name="chlorophyll_caption">Chlorophyll</string>
+    <string name="phycocyanin_caption">Phycocyanin</string>
     <string name="updated_at">Last updated</string>
     <string name="unknown_value">-</string>
     <string name="wind_direction_N">N</string>
@@ -64,6 +69,8 @@
     <string name="pref_updateInterval_300000">Every 5 minutes</string>
     <string name="pref_updateInterval_600000">Every 10 minutes</string>
     <string name="pref_updateInterval_default">60000</string>
+    <string name="pref_display_additional_data">Additional data</string>
+    <string name="pref_display_additional_data_summary">Show all available data</string>
     <string name="error_cannot_show_data">Cannot update data:</string>
     <string name="error_no_network_connection">No network connection</string>
 

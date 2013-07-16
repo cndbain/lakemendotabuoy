@@ -10,6 +10,7 @@ public class SettingsActivity extends PreferenceActivity {
 	public static final String KEY_PREF_DISTANCE_UNITS = "pref_distanceUnits";
 	public static final String KEY_PREF_TEMPERATURE_UNITS = "pref_temperatureUnits";
 	public static final String KEY_PREF_UPDATE_INTERVAL = "pref_updateInterval";
+	public static final String KEY_PREF_DISPLAY_ADDITIONAL_DATA = "pref_displayAdditionalData";
 	
     @SuppressLint("NewApi")
 	@SuppressWarnings("deprecation")

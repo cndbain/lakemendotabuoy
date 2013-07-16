@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
+	<ListPreference
+		android:defaultValue="@string/pref_updateInterval_default"
+		android:dialogTitle="@string/pref_updateInterval"
+		android:entries="@array/pref_updateInterval"
+		android:entryValues="@array/pref_updateIntervalValues"
+		android:key="pref_updateInterval"
+		android:title="@string/pref_updateInterval" />
 	<ListPreference
 		android:defaultValue="@string/pref_windSpeedUnits_milesPerHour"
 		android:dialogTitle="@string/pref_windSpeedUnits"
@@ -22,12 +28,10 @@
 		android:entryValues="@array/pref_distanceUnits"
 		android:key="pref_distanceUnits"
 		android:title="@string/pref_distanceUnits" />
-	<ListPreference
-		android:defaultValue="@string/pref_updateInterval_default"
-		android:dialogTitle="@string/pref_updateInterval"
-		android:entries="@array/pref_updateInterval"
-		android:entryValues="@array/pref_updateIntervalValues"
-		android:key="pref_updateInterval"
-		android:title="@string/pref_updateInterval" />
+    <CheckBoxPreference
+        android:key="pref_displayAdditionalData"
+        android:title="@string/pref_display_additional_data"
+        android:summary="@string/pref_display_additional_data_summary"
+        android:defaultValue="false" />
 
 </PreferenceScreen>

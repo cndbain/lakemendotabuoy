@@ -32,8 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="right"
-                android:visibility="invisible" >
-            </ProgressBar>
+                android:visibility="invisible" />
 
             <TextView
                 android:id="@+id/updated_at"
@@ -91,8 +90,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="1dp"
                     android:layout_span="2"
-                    android:text="" >
-                </TextView>
+                    android:text="" />
             </TableRow>
 
             <TableRow
@@ -122,8 +120,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="1dp"
                     android:layout_span="2"
-                    android:text="" >
-                </TextView>
+                    android:text="" />
             </TableRow>
 
             <TableRow
@@ -153,8 +150,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="1dp"
                     android:layout_span="2"
-                    android:text="" >
-                </TextView>
+                    android:text="" />
             </TableRow>
 
             <TableRow
@@ -184,8 +180,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="1dp"
                     android:layout_span="2"
-                    android:text="" >
-                </TextView>
+                    android:text="" />
             </TableRow>
 
             <TableRow
@@ -200,37 +195,6 @@
 
                 <TextView
                     android:id="@+id/humidity"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:text="@string/unknown_value"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textStyle="bold" />
-            </TableRow>
-
-            <TableRow
-                android:layout_height="1dp"
-                android:background="@color/water" >
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="1dp"
-                    android:layout_span="2"
-                    android:text="" >
-                </TextView>
-            </TableRow>
-
-            <TableRow
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
-
-                <TextView
-                    android:layout_weight="3"
-                    android:gravity="left"
-                    android:text="@string/dew_point_caption"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
-
-                <TextView
-                    android:id="@+id/dew_point"
                     android:layout_weight="1"
                     android:gravity="right"
                     android:text="@string/unknown_value"
@@ -290,8 +254,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="1dp"
                     android:layout_span="2"
-                    android:text="" >
-                </TextView>
+                    android:text="" />
             </TableRow>
 
             <TableRow
@@ -322,8 +285,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="1dp"
                     android:layout_span="2"
-                    android:text="" >
-                </TextView>
+                    android:text="" />
             </TableRow>
 
             <TableRow
@@ -354,8 +316,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="1dp"
                     android:layout_span="2"
-                    android:text="" >
-                </TextView>
+                    android:text="" />
             </TableRow>
 
             <TableRow
@@ -386,8 +347,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="1dp"
                     android:layout_span="2"
-                    android:text="" >
-                </TextView>
+                    android:text="" />
             </TableRow>
 
             <TableRow
@@ -418,8 +378,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="1dp"
                     android:layout_span="2"
-                    android:text="" >
-                </TextView>
+                    android:text="" />
             </TableRow>
 
             <TableRow
@@ -443,9 +402,169 @@
             </TableRow>
         </TableLayout>
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="2dp" />
-    </LinearLayout>
+        <TextView
+            android:id="@+id/additional_data_caption"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/additional"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/buoy"
+            android:textStyle="bold"
+            android:visibility="gone" />
 
+        <View
+            android:id="@+id/additional_data_line"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/buoy"
+            android:visibility="gone" />
+
+        <TableLayout
+            android:id="@+id/additional_data_table"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:visibility="gone" >
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_weight="3"
+                    android:gravity="left"
+                    android:text="@string/dew_point_caption"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <TextView
+                    android:id="@+id/dew_point"
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:text="@string/unknown_value"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold" />
+            </TableRow>
+
+            <TableRow
+                android:layout_height="1dp"
+                android:background="@color/water" >
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:layout_span="2"
+                    android:text="" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_weight="3"
+                    android:gravity="left"
+                    android:text="@string/dissolved_oxygen_caption"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <TextView
+                    android:id="@+id/dissolved_oxygen"
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:text="@string/unknown_value"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold" />
+            </TableRow>
+
+            <TableRow
+                android:layout_height="1dp"
+                android:background="@color/water" >
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:layout_span="2"
+                    android:text="" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_weight="3"
+                    android:gravity="left"
+                    android:text="@string/dissolved_oxygen_saturation_caption"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <TextView
+                    android:id="@+id/dissolved_oxygen_saturation"
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:text="@string/unknown_value"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold" />
+            </TableRow>
+
+            <TableRow
+                android:layout_height="1dp"
+                android:background="@color/water" >
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:layout_span="2"
+                    android:text="" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_weight="3"
+                    android:gravity="left"
+                    android:text="@string/chlorophyll_caption"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <TextView
+                    android:id="@+id/chlorophyll"
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:text="@string/unknown_value"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold" />
+            </TableRow>
+
+            <TableRow
+                android:layout_height="1dp"
+                android:background="@color/water" >
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:layout_span="2"
+                    android:text="" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_weight="3"
+                    android:gravity="left"
+                    android:text="@string/phycocyanin_caption"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <TextView
+                    android:id="@+id/phycocyanin"
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:text="@string/unknown_value"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold" />
+            </TableRow>
+        </TableLayout>
+    </LinearLayout>
 </ScrollView>
