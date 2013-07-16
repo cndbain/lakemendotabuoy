@@ -33,15 +33,13 @@
     </string-array>
     <string-array name="pref_updateInterval">
         <item name="0">@string/pref_updateInterval_0</item>
-        <item name="60000">@string/pref_updateInterval_60000</item>
-        <item name="60000">@string/pref_updateInterval_180000</item>
+        <item name="120000">@string/pref_updateInterval_120000</item>
         <item name="300000">@string/pref_updateInterval_300000</item>
         <item name="600000">@string/pref_updateInterval_600000</item>
     </string-array>
     <string-array name="pref_updateIntervalValues">
         <item name="0">0</item>
-        <item name="60000">60000</item>
-        <item name="60000">180000</item>
+        <item name="120000">120000</item>
         <item name="300000">300000</item>
         <item name="600000">600000</item>
     </string-array>

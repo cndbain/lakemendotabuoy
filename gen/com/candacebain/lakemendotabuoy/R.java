@@ -78,14 +78,14 @@ public final class R {
         public static final int main=0x7f0a0000;
     }
     public static final class string {
-        public static final int about_app_name=0x7f08004a;
-        public static final int about_author=0x7f08004c;
-        public static final int about_author_value=0x7f08004d;
-        public static final int about_data_provider=0x7f080050;
-        public static final int about_legal=0x7f080051;
-        public static final int about_questions_caption=0x7f08004e;
-        public static final int about_questions_value=0x7f08004f;
-        public static final int about_version=0x7f08004b;
+        public static final int about_app_name=0x7f080049;
+        public static final int about_author=0x7f08004b;
+        public static final int about_author_value=0x7f08004c;
+        public static final int about_data_provider=0x7f08004f;
+        public static final int about_legal=0x7f080050;
+        public static final int about_questions_caption=0x7f08004d;
+        public static final int about_questions_value=0x7f08004e;
+        public static final int about_version=0x7f08004a;
         public static final int action_about=0x7f080035;
         public static final int action_settings=0x7f080034;
         public static final int action_update=0x7f080033;
@@ -99,8 +99,8 @@ public final class R {
         public static final int dew_point_caption=0x7f080015;
         public static final int dissolved_oxygen_caption=0x7f080016;
         public static final int dissolved_oxygen_saturation_caption=0x7f080017;
-        public static final int error_cannot_show_data=0x7f080048;
-        public static final int error_no_network_connection=0x7f080049;
+        public static final int error_cannot_show_data=0x7f080047;
+        public static final int error_no_network_connection=0x7f080048;
         public static final int fahrenheit_suffix=0x7f080030;
         public static final int fifteen_meter_temperature_caption=0x7f080010;
         public static final int fifteen_meter_temperature_caption_in_feet=0x7f080011;
@@ -115,7 +115,7 @@ public final class R {
         public static final int one_meter_temperature_caption_in_feet=0x7f08000b;
         public static final int percent_suffix=0x7f08002f;
         public static final int phycocyanin_caption=0x7f080019;
-        public static final int pref_display_additional_data=0x7f080047;
+        public static final int pref_display_additional_data=0x7f080046;
         public static final int pref_distanceUnits=0x7f080036;
         public static final int pref_distanceUnits_feet=0x7f080037;
         public static final int pref_distanceUnits_meters=0x7f080038;
@@ -124,11 +124,10 @@ public final class R {
         public static final int pref_temperatureUnits_fahrenheit=0x7f08003a;
         public static final int pref_updateInterval=0x7f080040;
         public static final int pref_updateInterval_0=0x7f080041;
-        public static final int pref_updateInterval_180000=0x7f080043;
-        public static final int pref_updateInterval_300000=0x7f080044;
-        public static final int pref_updateInterval_60000=0x7f080042;
-        public static final int pref_updateInterval_600000=0x7f080045;
-        public static final int pref_updateInterval_default=0x7f080046;
+        public static final int pref_updateInterval_120000=0x7f080042;
+        public static final int pref_updateInterval_300000=0x7f080043;
+        public static final int pref_updateInterval_600000=0x7f080044;
+        public static final int pref_updateInterval_default=0x7f080045;
         public static final int pref_windSpeedUnits=0x7f08003c;
         public static final int pref_windSpeedUnits_knots=0x7f08003f;
         public static final int pref_windSpeedUnits_metersPerSecond=0x7f08003d;
