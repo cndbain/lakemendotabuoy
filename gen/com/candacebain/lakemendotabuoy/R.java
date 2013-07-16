@@ -55,8 +55,8 @@ public final class R {
         public static final int ten_meter_temperature_caption=0x7f0b000e;
         public static final int twenty_meter_temperature=0x7f0b0013;
         public static final int twenty_meter_temperature_caption=0x7f0b0012;
-        public static final int update_progress_bar=0x7f0b0001;
-        public static final int updated_at=0x7f0b0000;
+        public static final int update_progress_bar=0x7f0b0000;
+        public static final int updated_at=0x7f0b0001;
         public static final int wind_direction=0x7f0b0002;
         public static final int wind_gust=0x7f0b0004;
         public static final int wind_speed=0x7f0b0003;

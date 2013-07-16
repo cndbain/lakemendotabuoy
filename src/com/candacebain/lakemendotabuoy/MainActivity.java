@@ -520,7 +520,6 @@ public class MainActivity extends Activity {
 			if (throwable == null) {
 				displayData(result);
 			} else {
-				// !!! Test this.
 				displayError(getString(R.string.error_cannot_show_data) + "\n" + throwable.getMessage());
 			}
 			updateProgressBar.setVisibility(android.view.View.INVISIBLE);

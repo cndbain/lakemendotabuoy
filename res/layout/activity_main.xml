@@ -20,22 +20,29 @@
             android:orientation="horizontal" >
 
             <TextView
-                android:id="@+id/updated_at"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="4"
-                android:gravity="right"
-                android:text="@string/updated_at"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/buoy" />
+                android:text=""
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <ProgressBar
                 android:id="@+id/update_progress_bar"
                 style="?android:attr/progressBarStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="right"
                 android:visibility="invisible" >
             </ProgressBar>
+
+            <TextView
+                android:id="@+id/updated_at"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:text="@string/updated_at"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/buoy" />
         </LinearLayout>
 
         <TextView
