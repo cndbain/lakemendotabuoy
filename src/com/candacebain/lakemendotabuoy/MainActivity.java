@@ -97,6 +97,7 @@ public class MainActivity extends Activity {
 	// !!! check in to play store - with proper attribution
 	// !!! Honestly, should test on other things running older versions...
 	// !!! Fix up text to promote the app on google play
+	// !!! test what happens with errors
 
 	/*
 	 * (non-Javadoc)
@@ -106,7 +107,7 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		// Get values from resources
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 		if (windDirections == null) {
@@ -127,7 +128,7 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		
+
 		// Stop updating our data
 		stopUpdateTimer();
 	}
@@ -140,12 +141,11 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
+
 		// Start updating our data
 		startUpdateTimer();
 	}
-	
-	
+
 	/**
 	 * Set up our options menu
 	 */
@@ -175,7 +175,7 @@ public class MainActivity extends Activity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-	
+
 	/**
 	 * If the user has just returned from the settings menu, update our
 	 * measurement units and restart the update timer
@@ -273,9 +273,13 @@ public class MainActivity extends Activity {
 			updateTimer.schedule(new TimerTask() {
 				@Override
 				public void run() {
-					updateData();
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							updateData();
+						}
+					});
 				}
-
 			}, 0, updateInterval);
 		} else {
 			updateData();
@@ -294,6 +298,7 @@ public class MainActivity extends Activity {
 
 	/**
 	 * Format the wind direction value
+	 * 
 	 * @param windDirectionInDegrees
 	 * @return
 	 */
@@ -321,7 +326,9 @@ public class MainActivity extends Activity {
 	}
 
 	/**
-	 * Format the temperature value according to the user's preferences, converting units if necessary
+	 * Format the temperature value according to the user's preferences,
+	 * converting units if necessary
+	 * 
 	 * @param windDirectionInDegrees
 	 * @return
 	 */
@@ -347,7 +354,9 @@ public class MainActivity extends Activity {
 	}
 
 	/**
-	 * Format the wind speed according to the user's preferences, converting units if necessary
+	 * Format the wind speed according to the user's preferences, converting
+	 * units if necessary
+	 * 
 	 * @param value
 	 * @return
 	 */
@@ -382,6 +391,7 @@ public class MainActivity extends Activity {
 
 	/**
 	 * Format the humidity value for display
+	 * 
 	 * @param value
 	 * @return
 	 */
@@ -392,6 +402,7 @@ public class MainActivity extends Activity {
 
 	/**
 	 * Display the data returned from the service
+	 * 
 	 * @param result
 	 */
 	private void displayData(Map<String, Double> result) {
@@ -458,13 +469,13 @@ public class MainActivity extends Activity {
 			// !!! And remember to get the error messages from the resources?
 		}
 	}
-	
+
 	/**
 	 * Uses AsyncTask to download the data away from the main thread.
 	 */
 	private class DownloadDataTask extends
 			AsyncTask<Void, Void, Map<String, Double>> {
-		
+
 		Throwable throwable = null;
 
 		@Override
@@ -488,12 +499,12 @@ public class MainActivity extends Activity {
 		 */
 		@Override
 		protected void onPostExecute(Map<String, Double> result) {
-			if (throwable == null){
+			if (throwable == null) {
 				displayData(result);
-			}
-			else {
+			} else {
 				// TODO display error
-				// !!! if reuse update string, change the text color?  Then remember to set it back when actually show the time
+				// !!! if reuse update string, change the text color? Then
+				// remember to set it back when actually show the time
 				// !!! Set error message here
 			}
 
@@ -502,13 +513,16 @@ public class MainActivity extends Activity {
 	}
 
 	/**
-	 * Connects to the metobs web service, downloads data in XML, returns the most recent values in a string key -> double value map
+	 * Connects to the metobs web service, downloads data in XML, returns the
+	 * most recent values in a string key -> double value map
+	 * 
 	 * @return
 	 * @throws IOException
-	 * @throws ParseException 
-	 * @throws XmlPullParserException 
+	 * @throws ParseException
+	 * @throws XmlPullParserException
 	 */
-	private Map<String, Double> downloadData() throws IOException, ParseException, XmlPullParserException {
+	private Map<String, Double> downloadData() throws IOException,
+			ParseException, XmlPullParserException {
 		InputStream is = null;
 		Map<String, Double> entries = new HashMap<String, Double>();
 		try {

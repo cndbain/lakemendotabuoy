@@ -63,6 +63,6 @@
    	<string name="pref_updateInterval_180000">Every 3 minutes</string>
     <string name="pref_updateInterval_300000">Every 5 minutes</string>
     <string name="pref_updateInterval_600000">Every 10 minutes</string>
-    <string name="pref_updateInterval_default">180000</string>
+    <string name="pref_updateInterval_default">60000</string>
 
 </resources>
