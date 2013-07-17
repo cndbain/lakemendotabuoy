@@ -15,6 +15,6 @@
         android:id="@+id/action_about"
         android:orderInCategory="300"
         android:showAsAction="never"
-        android:icon = "@android:drawable/ic_menu_preferences"
+        android:icon = "@android:drawable/ic_menu_info_details"
         android:title="@string/action_about"/>
 </menu>
