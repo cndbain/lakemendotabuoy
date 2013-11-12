@@ -72,7 +72,7 @@
     <string name="pref_updateInterval_600000">Every 10 minutes</string>
     <string name="pref_updateInterval_default">120000</string>
     <string name="pref_display_additional_data">Show all available data</string>
-    <string name="error_cannot_show_data">Cannot update data:</string>
+    <string name="error_cannot_show_data">Cannot update data from Lake Mendota Buoy Server:</string>
     <string name="error_no_network_connection">No network connection</string>
     <string name="about_app_name">About Lake Mendota Buoy</string>
     <string name="about_version">Version</string>

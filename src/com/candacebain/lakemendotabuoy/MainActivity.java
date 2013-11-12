@@ -689,9 +689,12 @@ public class MainActivity extends Activity {
 									.parse(values[values.length - 1]);
 							entries.put(dataType, (double) dateTime.getTime());
 						} else {
-							// Store most recent double value
-							entries.put(dataType, Double
-									.parseDouble(values[values.length - 1]));
+							try {
+								// Store most recent double value
+								entries.put(dataType, Double
+										.parseDouble(values[values.length - 1]));
+							} catch (NumberFormatException ex){
+							}
 						}
 					}
 					break;
