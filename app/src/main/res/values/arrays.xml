@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="windDirections">
+        <item name="NNE">@string/wind_direction_NNE</item>
+        <item name="NE">@string/wind_direction_NE</item>
+        <item name="ENE">@string/wind_direction_ENE</item>
+        <item name="E">@string/wind_direction_E</item>
+        <item name="ESE">@string/wind_direction_ESE</item>
+        <item name="SE">@string/wind_direction_SE</item>
+        <item name="SSE">@string/wind_direction_SSE</item>
+        <item name="S">@string/wind_direction_S</item>
+        <item name="SSW">@string/wind_direction_SSW</item>
+        <item name="SW">@string/wind_direction_SW</item>
+        <item name="WSE">@string/wind_direction_WSW</item>
+        <item name="W">@string/wind_direction_W</item>
+        <item name="WNW">@string/wind_direction_WNW</item>
+        <item name="NW">@string/wind_direction_NW</item>
+        <item name="NNW">@string/wind_direction_NNW</item>
+    </string-array>
+    <string-array name="pref_distanceUnits">
+        <item name="FEET">@string/pref_distanceUnits_feet</item>
+        <item name="METERS">@string/pref_distanceUnits_meters</item>
+    </string-array>
+    <string-array name="pref_temperatureUnits">
+        <item name="FAHRENHEIT">@string/pref_temperatureUnits_fahrenheit</item>
+        <item name="CELSIUS">@string/pref_temperatureUnits_celsius</item>
+    </string-array>
+    <string-array name="pref_windSpeedUnits">
+        <item name="METERS_PER_SECOND">@string/pref_windSpeedUnits_metersPerSecond</item>
+        <item name="MILES_PER_HOUR">@string/pref_windSpeedUnits_milesPerHour</item>
+        <item name="KNOTS">@string/pref_windSpeedUnits_knots</item>
+    </string-array>
+    <string-array name="pref_updateInterval">
+        <item name="0">@string/pref_updateInterval_0</item>
+        <item name="120000">@string/pref_updateInterval_120000</item>
+        <item name="300000">@string/pref_updateInterval_300000</item>
+        <item name="600000">@string/pref_updateInterval_600000</item>
+    </string-array>
+    <string-array name="pref_updateIntervalValues">
+        <item name="0">0</item>
+        <item name="120000">120000</item>
+        <item name="300000">300000</item>
+        <item name="600000">600000</item>
+    </string-array>
+
+</resources>

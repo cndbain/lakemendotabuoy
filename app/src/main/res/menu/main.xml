@@ -1,0 +1,20 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:id="@+id/action_update"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:icon = "@drawable/ic_action_refresh"
+        android:title="@string/action_update"/>
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="200"
+        android:showAsAction="never"
+        android:icon = "@android:drawable/ic_menu_preferences"
+        android:title="@string/action_settings"/>
+     <item
+        android:id="@+id/action_about"
+        android:orderInCategory="300"
+        android:showAsAction="never"
+        android:icon = "@android:drawable/ic_menu_info_details"
+        android:title="@string/action_about"/>
+</menu>
