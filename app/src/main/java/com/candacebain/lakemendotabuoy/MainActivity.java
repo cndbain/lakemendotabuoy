@@ -18,21 +18,16 @@ package com.candacebain.lakemendotabuoy;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
 
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -45,7 +40,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.util.Xml;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -55,36 +49,15 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 public class MainActivity extends Activity {
 
 	/**
 	 * The source of all our data
 	 */
-	private static final String dataQueryURL = "http://metobs.ssec.wisc.edu/app/mendota/buoy/data/xml?symbols=t:rh:td:spd:dir:gust:wt_0.0:wt_1.0:wt_5.0:wt_10.0:wt_15.0:wt_20.0:do_ppm:do_sat:chlor:pc&end=-00:02:00";
-
-	/**
-	 * The data identifiers from the metobs XML
-	 */
-	private static final String AIR_TEMP = "AIR_TEMP";
-	private static final String REL_HUM = "REL_HUM";
-
-	private static final String WIND_SPEED = "WIND_SPEED_2.0";
-	private static final String WIND_DIRECTION = "WIND_DIRECTION_2.0";
-	private static final String WIND_GUST = "WIND_GUST";
-	private static final String TIMESTAMP = "timestamp";
-
-	private static final String WATER_TEMP_0 = "WATER_TEMP_0.0";
-	private static final String WATER_TEMP_1 = "WATER_TEMP_1.0";
-	private static final String WATER_TEMP_5 = "WATER_TEMP_5.0";
-	private static final String WATER_TEMP_10 = "WATER_TEMP_10.0";
-	private static final String WATER_TEMP_15 = "WATER_TEMP_15.0";
-	private static final String WATER_TEMP_20 = "WATER_TEMP_20.0";
-
-	private static final String DEWPOINT_CALC = "DEWPOINT_CALC";
-	private static final String DO_SAT = "DO_SAT";
-	private static final String DO_PPM = "DO_PPM";
-	private static final String CHLOROPHYLL = "CHLOROPHYLL_0.4";
-	private static final String PHYCOCYANIN = "PHYCOCYANIN_0.4";
+	private static final String dataQueryURL = "http://metobs.ssec.wisc.edu/app/mendota/buoy/data/json?symbols=t:rh:td:spd:dir:gust:wt_0.0:wt_1.0:wt_5.0:wt_10.0:wt_15.0:wt_20.0:do_ppm:do_sat:chlor:pc";
 
 	/**
 	 * Used to know when we've returned from the settings view
@@ -100,10 +73,13 @@ public class MainActivity extends Activity {
 	/**
 	 * Parse and format date values
 	 */
-	private static final SimpleDateFormat inputDateFormat = new SimpleDateFormat(
-			"yyyy-MM-dd HH:mm:ss", Locale.US);
 	private static final SimpleDateFormat outputDateFormat = new SimpleDateFormat(
 			"MMM dd, yyyy h:mm a", Locale.US);
+
+    /**
+     * Used to parse the JSON data we we get from the server
+     */
+    private static final Gson gson = new GsonBuilder().registerTypeAdapter(Date.class, new DateTypeAdapter()).create();
 
 	/**
 	 * Wind directions text array
@@ -226,7 +202,7 @@ public class MainActivity extends Activity {
 	}
 
 	/**
-	 * If the user has just returned from the settings menu, update our
+	 * If the user hasData just returned from the settings menu, update our
 	 * measurement units and restart the update timer
 	 */
 	@Override
@@ -246,7 +222,6 @@ public class MainActivity extends Activity {
 	 * Find the views we want to interact with while the application is running
 	 */
 	private void initializeViews() {
-		inputDateFormat.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
 		windDirection = (TextView) findViewById(R.id.wind_direction);
 		windSpeed = (TextView) findViewById(R.id.wind_speed);
 		windGust = (TextView) findViewById(R.id.wind_gust);
@@ -273,7 +248,7 @@ public class MainActivity extends Activity {
 		phycocyanin = (TextView) findViewById(R.id.phycocyanin);
 
 		additionalDataCaption = (TextView) findViewById(R.id.additional_data_caption);
-		additionalDataLine = (View) findViewById(R.id.additional_data_line);
+		additionalDataLine = findViewById(R.id.additional_data_line);
 		additionalDataTable = (TableLayout) findViewById(R.id.additional_data_table);
 
 		updatedAt = (TextView) findViewById(R.id.updated_at);
@@ -290,7 +265,7 @@ public class MainActivity extends Activity {
 	private void setWaterDepthCaptions() {
 		String distanceUnits = PreferenceManager.getDefaultSharedPreferences(
 				this).getString(SettingsActivity.KEY_PREF_DISTANCE_UNITS, "");
-		if (distanceUnits.equals(getString(R.string.pref_distanceUnits_feet))) {
+		if (getString(R.string.pref_distanceUnits_feet).equals(distanceUnits)) {
 			oneMeterCaption
 					.setText(getString(R.string.one_meter_temperature_caption_in_feet));
 			fiveMeterCaption
@@ -301,8 +276,7 @@ public class MainActivity extends Activity {
 					.setText(getString(R.string.fifteen_meter_temperature_caption_in_feet));
 			twentyMeterCaption
 					.setText(getString(R.string.twenty_meter_temperature_caption_in_feet));
-		} else if (distanceUnits
-				.equals(getString(R.string.pref_distanceUnits_meters))) {
+		} else if (getString(R.string.pref_distanceUnits_meters).equals(distanceUnits)) {
 			oneMeterCaption
 					.setText(getString(R.string.one_meter_temperature_caption));
 			fiveMeterCaption
@@ -378,8 +352,8 @@ public class MainActivity extends Activity {
 	/**
 	 * Format the wind direction value
 	 * 
-	 * @param windDirectionInDegrees
-	 * @return
+	 * @param windDirectionInDegrees The wind direction value
+	 * @return A formatted wind direction string
 	 */
 	String formatWindDirection(double windDirectionInDegrees) {
 		if (windDirectionInDegrees <= 0 || windDirectionInDegrees > 360) {
@@ -392,15 +366,15 @@ public class MainActivity extends Activity {
 			return getString(R.string.wind_direction_N);
 
 		double i = 11.25; // 1/2 degree increment between the directions
-		for (int j = 0; j < windDirections.length; j++) {
+		for (String windDirection : windDirections) {
 			if (windDirectionInDegrees >= i
 					&& windDirectionInDegrees < (i + 22.5)) {
-				return windDirections[j];
+				return windDirection;
 			}
 			i += 22.5;
 		}
 
-		// shouldn't ever get here
+		// shouldn't ever getMostRecentValue here
 		return getString(R.string.unknown_value);
 	}
 
@@ -408,16 +382,15 @@ public class MainActivity extends Activity {
 	 * Format the temperature value according to the user's preferences,
 	 * converting units if necessary
 	 * 
-	 * @param windDirectionInDegrees
-	 * @return
+	 * @param value The temperature value
+	 * @return A formatted temperature string
 	 */
 	private String formatTemperature(double value) {
 		// What units should we use to display temperature?
 		String temperatureUnits = PreferenceManager
 				.getDefaultSharedPreferences(this).getString(
 						SettingsActivity.KEY_PREF_TEMPERATURE_UNITS, "");
-		boolean isTemperatureFahrenheit = temperatureUnits
-				.equals(getString(R.string.pref_temperatureUnits_fahrenheit));
+		boolean isTemperatureFahrenheit = "Fahrenheit".equals(temperatureUnits);
 
 		String temperatureUnitSuffix = getString(R.string.celsius_suffix);
 		if (isTemperatureFahrenheit) {
@@ -436,17 +409,15 @@ public class MainActivity extends Activity {
 	 * Format the wind speed according to the user's preferences, converting
 	 * units if necessary
 	 * 
-	 * @param value
-	 * @return
+	 * @param value The wind speed value
+	 * @return A formatted wind speed string
 	 */
 	private String formatWindSpeed(double value) {
 		// What units should we use to display wind speed?
 		String windSpeedUnits = PreferenceManager.getDefaultSharedPreferences(
 				this).getString(SettingsActivity.KEY_PREF_WIND_SPEED_UNITS, "");
-		boolean isWindSpeedMph = windSpeedUnits
-				.equals(getString(R.string.pref_windSpeedUnits_milesPerHour));
-		boolean isWindSpeedKnots = windSpeedUnits
-				.equals(getString(R.string.pref_windSpeedUnits_knots));
+		boolean isWindSpeedMph = "Miles Per Hour".equals(windSpeedUnits);
+		boolean isWindSpeedKnots = "Knots".equals(windSpeedUnits);
 
 		// Set up the suffixes for the units
 		String windSpeedUnitSuffix = " "
@@ -471,8 +442,8 @@ public class MainActivity extends Activity {
 	/**
 	 * Format the humidity value for display
 	 * 
-	 * @param value
-	 * @return
+	 * @param value our humidity value
+	 * @return The formatted humidity string
 	 */
 	private String formatHumidity(double value) {
 		String humidityUnitSuffix = getString(R.string.percent_suffix);
@@ -482,75 +453,75 @@ public class MainActivity extends Activity {
 	/**
 	 * Display the data returned from the service
 	 * 
-	 * @param result
+	 * @param result the data we got back from the buoy server
 	 */
-	private void displayData(Map<String, Double> result) {
-		if (result.containsKey(WIND_DIRECTION)) {
+	private void displayData(BuoyData result) {
+		if (result.hasData(BuoyData.BuoyDataType.WIND_DIRECTION)) {
 			windDirection.setText(formatWindDirection(result
-					.get(WIND_DIRECTION)));
+					.getMostRecentValue(BuoyData.BuoyDataType.WIND_DIRECTION)));
 		}
-		if (result.containsKey(WIND_SPEED)) {
-			windSpeed.setText(formatWindSpeed(result.get(WIND_SPEED)));
+		if (result.hasData(BuoyData.BuoyDataType.WIND_SPEED)) {
+			windSpeed.setText(formatWindSpeed(result.getMostRecentValue(BuoyData.BuoyDataType.WIND_SPEED)));
 		}
-		if (result.containsKey(WIND_GUST)) {
-			windGust.setText(formatWindSpeed(result.get(WIND_GUST)));
+		if (result.hasData(BuoyData.BuoyDataType.WIND_GUST)) {
+			windGust.setText(formatWindSpeed(result.getMostRecentValue(BuoyData.BuoyDataType.WIND_GUST)));
 		}
-		if (result.containsKey(AIR_TEMP)) {
-			airTemperature.setText(formatTemperature(result.get(AIR_TEMP)));
+		if (result.hasData(BuoyData.BuoyDataType.AIR_TEMP)) {
+			airTemperature.setText(formatTemperature(result.getMostRecentValue(BuoyData.BuoyDataType.AIR_TEMP)));
 		}
-		if (result.containsKey(REL_HUM)) {
-			humidity.setText(formatHumidity(result.get(REL_HUM)));
+		if (result.hasData(BuoyData.BuoyDataType.REL_HUM)) {
+			humidity.setText(formatHumidity(result.getMostRecentValue(BuoyData.BuoyDataType.REL_HUM)));
 		}
-		if (result.containsKey(WATER_TEMP_0)) {
+		if (result.hasData(BuoyData.BuoyDataType.WATER_TEMP_0)) {
 			surfaceTemperature.setText(formatTemperature(result
-					.get(WATER_TEMP_0)));
+					.getMostRecentValue(BuoyData.BuoyDataType.WATER_TEMP_0)));
 		}
-		if (result.containsKey(WATER_TEMP_1)) {
+		if (result.hasData(BuoyData.BuoyDataType.WATER_TEMP_1)) {
 			oneMeterTemperature.setText(formatTemperature(result
-					.get(WATER_TEMP_1)));
+					.getMostRecentValue(BuoyData.BuoyDataType.WATER_TEMP_1)));
 		}
-		if (result.containsKey(WATER_TEMP_5)) {
+		if (result.hasData(BuoyData.BuoyDataType.WATER_TEMP_5)) {
 			fiveMeterTemperature.setText(formatTemperature(result
-					.get(WATER_TEMP_5)));
+					.getMostRecentValue(BuoyData.BuoyDataType.WATER_TEMP_5)));
 		}
-		if (result.containsKey(WATER_TEMP_10)) {
+		if (result.hasData(BuoyData.BuoyDataType.WATER_TEMP_10)) {
 			tenMeterTemperature.setText(formatTemperature(result
-					.get(WATER_TEMP_10)));
+					.getMostRecentValue(BuoyData.BuoyDataType.WATER_TEMP_10)));
 		}
-		if (result.containsKey(WATER_TEMP_15)) {
+		if (result.hasData(BuoyData.BuoyDataType.WATER_TEMP_15)) {
 			fifteenMeterTemperature.setText(formatTemperature(result
-					.get(WATER_TEMP_15)));
+					.getMostRecentValue(BuoyData.BuoyDataType.WATER_TEMP_15)));
 		}
-		if (result.containsKey(WATER_TEMP_20)) {
+		if (result.hasData(BuoyData.BuoyDataType.WATER_TEMP_20)) {
 			twentyMeterTemperature.setText(formatTemperature(result
-					.get(WATER_TEMP_20)));
+					.getMostRecentValue(BuoyData.BuoyDataType.WATER_TEMP_20)));
 		}
-		if (result.containsKey(DEWPOINT_CALC)) {
-			dewPoint.setText(formatTemperature(result.get(DEWPOINT_CALC)));
+		if (result.hasData(BuoyData.BuoyDataType.DEWPOINT_CALC)) {
+			dewPoint.setText(formatTemperature(result.getMostRecentValue(BuoyData.BuoyDataType.DEWPOINT_CALC)));
 		}
-		if (result.containsKey(DO_SAT)) {
-			dissolvedOxygen.setText(decimalFormat.format(result.get(DO_SAT)));
+		if (result.hasData(BuoyData.BuoyDataType.DO_SAT)) {
+			dissolvedOxygen.setText(decimalFormat.format(result.getMostRecentValue(BuoyData.BuoyDataType.DO_SAT)));
 		}
-		if (result.containsKey(DO_PPM)) {
+		if (result.hasData(BuoyData.BuoyDataType.DO_PPM)) {
 			dissolvedOxygenSaturation.setText(decimalFormat.format(result
-					.get(DO_PPM)));
+					.getMostRecentValue(BuoyData.BuoyDataType.DO_PPM)));
 		}
-		if (result.containsKey(CHLOROPHYLL)) {
-			chlorophyll.setText(decimalFormat.format(result.get(CHLOROPHYLL)));
+		if (result.hasData(BuoyData.BuoyDataType.CHLOROPHYLL)) {
+			chlorophyll.setText(decimalFormat.format(result.getMostRecentValue(BuoyData.BuoyDataType.CHLOROPHYLL)));
 		}
-		if (result.containsKey(PHYCOCYANIN)) {
-			phycocyanin.setText(decimalFormat.format(result.get(PHYCOCYANIN)));
+		if (result.hasData(BuoyData.BuoyDataType.PHYCOCYANIN)) {
+			phycocyanin.setText(decimalFormat.format(result.getMostRecentValue(BuoyData.BuoyDataType.PHYCOCYANIN)));
 		}
-		if (result.containsKey(TIMESTAMP)) {
-			Date dateTime = new Date(Math.round(result.get(TIMESTAMP)));
-			updatedAt.setText(outputDateFormat.format(dateTime));
+		Date timeStamp = result.getMostRecentTimestamp();
+		if (timeStamp != null){
+			updatedAt.setText(outputDateFormat.format(timeStamp));
 		}
 	}
 
 	/**
 	 * Something went wrong, tell the user what
 	 * 
-	 * @param message
+	 * @param message The error to show to the user
 	 */
 	private void displayError(String message) {
 		Context context = getApplicationContext();
@@ -570,8 +541,7 @@ public class MainActivity extends Activity {
 
 		// Inflate and set the layout for the dialog
 		// Pass null as the parent view because its going in the dialog layout
-		builder.setView(inflater.inflate(R.layout.about, null));
-		builder.setPositiveButton(R.string.ok,
+		builder.setView(inflater.inflate(R.layout.about, null)).setPositiveButton(R.string.ok,
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						// Just close the dialog
@@ -601,21 +571,15 @@ public class MainActivity extends Activity {
 	 * Uses AsyncTask to download the data away from the main thread.
 	 */
 	private class DownloadDataTask extends
-			AsyncTask<Void, Void, Map<String, Double>> {
+			AsyncTask<Void, Void, BuoyData> {
 
 		Throwable throwable = null;
 
 		@Override
-		protected Map<String, Double> doInBackground(Void... params) {
+		protected BuoyData doInBackground(Void... params) {
 			try {
 				return downloadData();
 			} catch (IOException e) {
-				throwable = e;
-				return null;
-			} catch (ParseException e) {
-				throwable = e;
-				return null;
-			} catch (XmlPullParserException e) {
 				throwable = e;
 				return null;
 			}
@@ -625,7 +589,7 @@ public class MainActivity extends Activity {
 		 * onPostExecute displays the results of the AsyncTask.
 		 */
 		@Override
-		protected void onPostExecute(Map<String, Double> result) {
+		protected void onPostExecute(BuoyData result) {
 			if (throwable == null) {
 				displayData(result);
 			} else {
@@ -637,18 +601,15 @@ public class MainActivity extends Activity {
 	}
 
 	/**
-	 * Connects to the metobs web service, downloads data in XML, returns the
-	 * most recent values in a string key -> double value map
+	 * Connects to the metobs web service, downloads data in JSON, returns the
+	 * values in a BuoyData object.
 	 * 
-	 * @return
-	 * @throws IOException
-	 * @throws ParseException
-	 * @throws XmlPullParserException
+	 * @return a BuoyData object
 	 */
-	private Map<String, Double> downloadData() throws IOException,
-			ParseException, XmlPullParserException {
-		InputStream is = null;
-		Map<String, Double> entries = new HashMap<String, Double>();
+	private BuoyData downloadData() throws IOException {
+		BuoyData result = null;
+		InputStream input = null;
+        Reader reader = null;
 		try {
 			URL url = new URL(dataQueryURL);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -658,58 +619,21 @@ public class MainActivity extends Activity {
 			conn.setDoInput(true);
 			// Starts the query
 			conn.connect();
-			is = conn.getInputStream();
+			input = conn.getInputStream();
+            reader = new InputStreamReader(input, "UTF-8");
 
-			XmlPullParser parser = Xml.newPullParser();
-			parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
-			parser.setInput(is, null);
-			parser.nextTag();
+			result = gson.fromJson(reader, BuoyData.class);
 
-			String dataType = null;
-
-			parser.require(XmlPullParser.START_TAG, null, "metobs");
-			while (parser.next() != XmlPullParser.END_DOCUMENT) {
-
-				switch (parser.getEventType()) {
-				case XmlPullParser.START_TAG:
-					String name = parser.getName();
-					if (name.equals("data")) {
-						dataType = parser.getAttributeValue(null, "symbol");
-					} else if (name.equals("timestamp")) {
-						dataType = name;
-					}
-					break;
-				case XmlPullParser.TEXT:
-					if (dataType != null) {
-						String text = parser.getText();
-						String[] values = text.split(",");
-						if (dataType.equals("timestamp")) {
-							// Store timestamp value
-							Date dateTime = inputDateFormat
-									.parse(values[values.length - 1]);
-							entries.put(dataType, (double) dateTime.getTime());
-						} else {
-							try {
-								// Store most recent double value
-								entries.put(dataType, Double
-										.parseDouble(values[values.length - 1]));
-							} catch (NumberFormatException ex){
-							}
-						}
-					}
-					break;
-				case XmlPullParser.END_TAG:
-					dataType = null;
-					break;
-				}
-			}
 		} finally {
-			// Makes sure that the InputStream is closed after the app is
-			// finished using it.
-			if (is != null) {
-				is.close();
+			// Cleanup
+            if (reader != null){
+                reader.close();
+            }
+
+			if (input != null) {
+				input.close();
 			}
 		}
-		return entries;
+		return result;
 	}
 }

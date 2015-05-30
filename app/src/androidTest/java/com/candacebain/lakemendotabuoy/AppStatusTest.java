@@ -2,11 +2,11 @@ package com.candacebain.lakemendotabuoy;
 
 import com.google.gson.Gson;
 
-import junit.framework.TestCase;
-
 import org.junit.Test;
 
-public class AppStatusTest extends TestCase {
+import static junit.framework.Assert.assertEquals;
+
+public class AppStatusTest {
 
     // Test writing and reading an AppStatus class to a JSON string
     @Test

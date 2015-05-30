@@ -1,36 +1,117 @@
 package com.candacebain.lakemendotabuoy;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
+import java.util.EnumMap;
 
-/**
- * Created by candace on 4/6/15.
- */
 public class BuoyData {
 
-    // TODO - put an enum here for the buoy symbols.
+    /**
+     * The data identifiers from the metobjs server
+     */
+    public enum BuoyDataType{
+        AIR_TEMP("AIR_TEMP"),
+        REL_HUM("REL_HUM"),
+        WIND_SPEED("WIND_SPEED_2.0"),
+        WIND_DIRECTION("WIND_DIRECTION_2.0"),
+        WIND_GUST("WIND_GUST"),
+        TIMESTAMP("timestamp"),
+        WATER_TEMP_0("WATER_TEMP_0.0"),
+        WATER_TEMP_1("WATER_TEMP_1.0"),
+        WATER_TEMP_5("WATER_TEMP_5.0"),
+        WATER_TEMP_10("WATER_TEMP_10.0"),
+        WATER_TEMP_15("WATER_TEMP_15.0"),
+        WATER_TEMP_20("WATER_TEMP_20.0"),
+        DEWPOINT_CALC("DEWPOINT_CALC"),
+        DO_SAT("DO_SAT"),
+        DO_PPM("DO_PPM"),
+        CHLOROPHYLL("CHLOROPHYLL_0.4"),
+        PHYCOCYANIN("PHYCOCYANIN_0.4"),
+        UNKNOWN("");
+        
+        private String metobsString;
 
-    // Get this from http://metobs.ssec.wisc.edu/app/mendota/buoy/data/json?symbols=t:rh:td:spd:dir:gust:wt_0.0:wt_1.0:wt_5.0:wt_10.0:wt_15.0:wt_20.0:do_ppm:do_sat:chlor:pc
+        BuoyDataType(String metobsString){
+            this.metobsString = metobsString;
+        }
 
-    // Should be like this:
+        @Override public String toString() {
+            return this.metobsString;
+        }
 
-    // {"symbols": ["AIR_TEMP", "REL_HUM", "DEWPOINT_CALC", "WIND_SPEED_2.0", "WIND_DIRECTION_2.0", "WIND_GUST", "WATER_TEMP_0.0", "WATER_TEMP_1.0", "WATER_TEMP_5.0", "WATER_TEMP_10.0", "WATER_TEMP_15.0", "WATER_TEMP_20.0", "DO_PPM", "DO_SAT", "CHLOROPHYLL_0.4", "PHYCOCYANIN_0.4"], "stamps": ["2014-10-12 17:13:00", "2014-10-12 17:13:05", "2014-10-12 17:13:10", "2014-10-12 17:13:15", "2014-10-12 17:13:20", "2014-10-12 17:13:25", "2014-10-12 17:13:30", "2014-10-12 17:13:35", "2014-10-12 17:13:40", "2014-10-12 17:13:45", "2014-10-12 17:13:50", "2014-10-12 17:13:55"], "data": [[-999.0, -999.0, NaN, -999.0, -999.0, -999.0, -999.0, 13.91, 14.15, 14.67, 14.16, 0.0, 9.84, 95.2, -544.9, 5213.0], [-999.0, -999.0, NaN, -999.0, -999.0, -999.0, -999.0, 13.91, 14.15, 14.67, 14.16, 0.0, 9.84, 95.2, -544.9, 5213.0], [-999.0, -999.0, NaN, -999.0, -999.0, -999.0, -999.0, 13.91, 14.15, 14.67, 14.16, 0.0, 9.84, 95.2, -544.9, 5213.0], [-999.0, -999.0, NaN, -999.0, -999.0, -999.0, -999.0, 13.91, 14.15, 14.67, 14.16, 0.0, 9.84, 95.2, -544.9, 5213.0], [-999.0, -999.0, NaN, -999.0, -999.0, -999.0, -999.0, 13.91, 14.15, 14.67, 14.16, 0.0, 9.84, 95.2, -544.9, 5213.0], [-999.0, -999.0, NaN, -999.0, -999.0, -999.0, -999.0, 13.91, 14.15, 14.67, 14.16, 0.0, 9.84, 95.2, -544.9, 5213.0], [-999.0, -999.0, NaN, -999.0, -999.0, -999.0, -999.0, 13.91, 14.15, 14.67, 14.16, 0.0, 9.84, 95.2, -544.9, 5213.0], [-999.0, -999.0, NaN, -999.0, -999.0, -999.0, -999.0, 13.91, 14.15, 14.67, 14.16, 0.0, 9.84, 95.2, -544.9, 5213.0], [-999.0, -999.0, NaN, -999.0, -999.0, -999.0, -999.0, 13.91, 14.15, 14.67, 14.16, 0.0, 9.84, 95.2, -544.9, 5213.0], [-999.0, -999.0, NaN, -999.0, -999.0, -999.0, -999.0, 13.91, 14.15, 14.67, 14.16, 0.0, 9.84, 95.2, -544.9, 5213.0], [-999.0, -999.0, NaN, -999.0, -999.0, -999.0, -999.0, 13.91, 14.15, 14.67, 14.16, 0.0, 9.84, 95.2, -544.9, 5213.0], [-999.0, -999.0, NaN, -999.0, -999.0, -999.0, -999.0, 13.91, 14.15, 14.67, 14.16, 0.0, 9.84, 95.2, -544.9, 5213.0]]}
+        public static BuoyDataType fromString(String metobsString){
+            String compareMetobsString = "";
+            if (metobsString != null){
+                compareMetobsString = metobsString.trim().toLowerCase();
+            }
 
-    // Use GSON to parse this out.
+            for (BuoyDataType buoyDataType : BuoyDataType.values()){
+                if (buoyDataType.toString().trim().toLowerCase().equals(compareMetobsString)){
+                    return buoyDataType;
+                }
+            }
+            return BuoyDataType.UNKNOWN;
+        }
+    }
 
-    // I need this for the GSON date parser.
+    private String [] symbols = null;
+    private Date [] stamps = null;
+    private float [][] data = null;
 
-    private static final SimpleDateFormat inputDateFormat = new SimpleDateFormat(
-            "yyyy-MM-dd HH:mm:ss", Locale.US);
+    private EnumMap<BuoyDataType, Integer> columnIndices = new EnumMap<BuoyDataType, Integer>(BuoyDataType.class);
 
-    // TODO - and remove the old src directory, I think
+    /**
+     * Our no-argument constructor, will only be called by GSON
+     */
+    public BuoyData(){
 
-    private String [] symbols;
-    private Date [] stamps;
-    private float [][] data;
+    }
 
-    // Gson needs this
-    public void BuoyData(){
+    /**
+     * If our column indices haven't been initialized yet, do so now
+     */
+    private void initColumnIndices() {
+        if (columnIndices.size() == 0) {
+            for (int i = 0; i < symbols.length; i++) {
+                BuoyDataType buoyDataType = BuoyDataType.fromString(symbols[i]);
+                if (buoyDataType != BuoyDataType.UNKNOWN) {
+                    columnIndices.put(buoyDataType, i);
+                }
+            }
+        }
+    }
+
+    /**
+     * @return The most recent timestamp
+     */
+    public Date getMostRecentTimestamp(){
+        if (stamps.length > 0){
+            return stamps[stamps.length-1];
+        }
+        return null;
+    }
+
+    /**
+     * @param type the data type we're checking
+     * @return true if we have data for this type
+     */
+    public boolean hasData(BuoyDataType type){
+        initColumnIndices();
+        return (columnIndices.containsKey(type));
+    }
+
+    /**
+     * @param type the data type we're fetching
+     * @return The most recent value for this data type, or -1 if we have no values
+     */
+    public double getMostRecentValue(BuoyDataType type) {
+        if (hasData(type)) {
+            int columnIndex = columnIndices.get(type);
+            if (data.length > 0) {
+                if (data[data.length - 1].length > columnIndex) {
+                    return data[data.length - 1][columnIndex];
+                }
+            }
+        }
+        return -1;
     }
 }
