@@ -1,11 +1,13 @@
 package com.candacebain.lakemendotabuoy;
 
+import android.test.suitebuilder.annotation.SmallTest;
+
 import com.google.gson.Gson;
 
 import org.junit.Test;
-
 import static junit.framework.Assert.assertTrue;
 
+@SmallTest
 public class BuoyDataTest {
 
     @Test

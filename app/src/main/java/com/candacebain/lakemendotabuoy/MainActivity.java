@@ -29,6 +29,7 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -51,10 +52,15 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class MainActivity extends Activity {
+
+	public static GoogleAnalytics analytics;
+	public static Tracker tracker;
 
 	/**
 	 * The source of all our buoy data
@@ -150,6 +156,14 @@ public class MainActivity extends Activity {
 					R.array.windDirections);
 		}
 		setContentView(R.layout.activity_main);
+
+        // Enable google analytics
+        analytics = GoogleAnalytics.getInstance(this);
+        analytics.setLocalDispatchPeriod(1800);
+
+        tracker = analytics.newTracker("UA-63582842-1");
+        tracker.enableExceptionReporting(true);
+        tracker.enableAutoActivityTracking(true);
 
 		// Set up our views
 		initializeViews();
@@ -585,9 +599,18 @@ public class MainActivity extends Activity {
 		// Get the layout inflater
 		LayoutInflater inflater = getLayoutInflater();
 
+        View aboutView = inflater.inflate(R.layout.about, null);
+
+        TextView versionNameTextView = (TextView) aboutView.findViewById(R.id.version_text);
+        try {
+            versionNameTextView.setText(getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
+        } catch (PackageManager.NameNotFoundException e) {
+            // Umm, there will always be a name.
+        }
+
 		// Inflate and set the layout for the dialog
 		// Pass null as the parent view because its going in the dialog layout
-		builder.setView(inflater.inflate(R.layout.about, null)).setPositiveButton(R.string.ok,
+		builder.setView(aboutView).setPositiveButton(R.string.ok,
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						// Just close the dialog

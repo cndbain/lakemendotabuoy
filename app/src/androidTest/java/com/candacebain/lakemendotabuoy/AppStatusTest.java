@@ -1,11 +1,14 @@
 package com.candacebain.lakemendotabuoy;
 
+import android.test.suitebuilder.annotation.SmallTest;
+
 import com.google.gson.Gson;
 
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
 
+@SmallTest
 public class AppStatusTest {
 
     // Test writing and reading an AppStatus class to a JSON string
