@@ -56,6 +56,7 @@ public class BuoyData {
     private String [] symbols = null;
     private Date [] stamps = null;
     private float [][] data = null;
+    private AppStatus appStatus = null;
 
     private EnumMap<BuoyDataType, Integer> columnIndices = new EnumMap<BuoyDataType, Integer>(BuoyDataType.class);
 
@@ -78,6 +79,22 @@ public class BuoyData {
                 }
             }
         }
+    }
+
+    /**
+     * Sets the application status
+     *
+     * @param appStatus the application status
+     */
+    public void setStatus(AppStatus appStatus) {
+        this.appStatus = appStatus;
+    }
+
+    /**
+     * @return The application status, or none if not available
+     */
+    public AppStatus getAppStatus(){
+        return this.appStatus;
     }
 
     /**

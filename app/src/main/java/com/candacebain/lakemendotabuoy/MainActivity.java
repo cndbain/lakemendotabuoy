@@ -40,6 +40,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -55,9 +57,14 @@ import com.google.gson.GsonBuilder;
 public class MainActivity extends Activity {
 
 	/**
-	 * The source of all our data
+	 * The source of all our buoy data
 	 */
 	private static final String dataQueryURL = "http://metobs.ssec.wisc.edu/app/mendota/buoy/data/json?symbols=t:rh:td:spd:dir:gust:wt_0.0:wt_1.0:wt_5.0:wt_10.0:wt_15.0:wt_20.0:do_ppm:do_sat:chlor:pc";
+
+    /**
+     * Extra status information about the buoy
+     */
+    private static final String statusQueryURL = "https://s3-us-west-2.amazonaws.com/lakemendotabuoy/buoy_status.json";
 
 	/**
 	 * Used to know when we've returned from the settings view
@@ -117,6 +124,10 @@ public class MainActivity extends Activity {
 	private TextView additionalDataCaption;
 	private View additionalDataLine;
 	private TableLayout additionalDataTable;
+
+    private TextView messageDataCaption;
+    private View messageDataLine;
+    private TextView messageText;
 
 	private TextView updatedAt;
 	private ProgressBar updateProgressBar;
@@ -188,7 +199,7 @@ public class MainActivity extends Activity {
 		switch (item.getItemId()) {
 		case R.id.action_settings:
 			startActivityForResult(new Intent(this, SettingsActivity.class),
-					SETTINGS_RESPONSE);
+                    SETTINGS_RESPONSE);
 			return true;
 		case R.id.action_about:
 			displayAboutDialog();
@@ -251,6 +262,10 @@ public class MainActivity extends Activity {
 		additionalDataLine = findViewById(R.id.additional_data_line);
 		additionalDataTable = (TableLayout) findViewById(R.id.additional_data_table);
 
+        messageDataCaption = (TextView) findViewById(R.id.message_caption);
+        messageDataLine = findViewById(R.id.message_line);
+        messageText = (TextView) findViewById(R.id.message_text);
+
 		updatedAt = (TextView) findViewById(R.id.updated_at);
 		updateProgressBar = (ProgressBar) findViewById(R.id.update_progress_bar);
 
@@ -264,7 +279,7 @@ public class MainActivity extends Activity {
 	 */
 	private void setWaterDepthCaptions() {
 		String distanceUnits = PreferenceManager.getDefaultSharedPreferences(
-				this).getString(SettingsActivity.KEY_PREF_DISTANCE_UNITS, "");
+                this).getString(SettingsActivity.KEY_PREF_DISTANCE_UNITS, "");
 		if (getString(R.string.pref_distanceUnits_feet).equals(distanceUnits)) {
 			oneMeterCaption
 					.setText(getString(R.string.one_meter_temperature_caption_in_feet));
@@ -297,8 +312,8 @@ public class MainActivity extends Activity {
 	private void setAdditionalDataVisibility() {
 		boolean showAdditionalData = PreferenceManager
 				.getDefaultSharedPreferences(this).getBoolean(
-						SettingsActivity.KEY_PREF_DISPLAY_ADDITIONAL_DATA,
-						false);
+                        SettingsActivity.KEY_PREF_DISPLAY_ADDITIONAL_DATA,
+                        false);
 		if (showAdditionalData) {
 			additionalDataCaption.setVisibility(android.view.View.VISIBLE);
 			additionalDataLine.setVisibility(android.view.View.VISIBLE);
@@ -309,6 +324,23 @@ public class MainActivity extends Activity {
 			additionalDataTable.setVisibility(android.view.View.GONE);
 		}
 	}
+
+    /**
+     * Displays a status message to the users
+     *
+     * @param showStatusMessage Whether the status message should be displayed
+     */
+    private void setStatusMessageVisibility(boolean showStatusMessage){
+        if (showStatusMessage) {
+            messageDataCaption.setVisibility(android.view.View.VISIBLE);
+            messageDataLine.setVisibility(android.view.View.VISIBLE);
+            messageText.setVisibility(android.view.View.VISIBLE);
+        } else {
+            messageDataCaption.setVisibility(android.view.View.GONE);
+            messageDataLine.setVisibility(android.view.View.GONE);
+            messageText.setVisibility(android.view.View.GONE);
+        }
+    }
 
 	/**
 	 * Sets up a timer to update the data on the schedule preferred by the user
@@ -386,10 +418,15 @@ public class MainActivity extends Activity {
 	 * @return A formatted temperature string
 	 */
 	private String formatTemperature(double value) {
+        // A quick sanity check on the temperature
+        if (value <= 0 || value > 100){
+            return "-";
+        }
+
 		// What units should we use to display temperature?
 		String temperatureUnits = PreferenceManager
 				.getDefaultSharedPreferences(this).getString(
-						SettingsActivity.KEY_PREF_TEMPERATURE_UNITS, "");
+                        SettingsActivity.KEY_PREF_TEMPERATURE_UNITS, "");
 		boolean isTemperatureFahrenheit = "Fahrenheit".equals(temperatureUnits);
 
 		String temperatureUnitSuffix = getString(R.string.celsius_suffix);
@@ -516,6 +553,15 @@ public class MainActivity extends Activity {
 		if (timeStamp != null){
 			updatedAt.setText(outputDateFormat.format(timeStamp));
 		}
+
+        AppStatus appStatus = result.getAppStatus();
+        if (appStatus != null && appStatus.getDisplayStatus() != null && appStatus.getDisplayStatus().length() > 0){
+            messageText.setText(Html.fromHtml(appStatus.getDisplayStatus()));
+            messageText.setMovementMethod(LinkMovementMethod.getInstance());
+            setStatusMessageVisibility(true);
+        } else {
+            setStatusMessageVisibility(false);
+        }
 	}
 
 	/**
@@ -623,6 +669,7 @@ public class MainActivity extends Activity {
             reader = new InputStreamReader(input, "UTF-8");
 
 			result = gson.fromJson(reader, BuoyData.class);
+            downloadStatusInformation(result);
 
 		} finally {
 			// Cleanup
@@ -636,4 +683,47 @@ public class MainActivity extends Activity {
 		}
 		return result;
 	}
+
+    /**
+     * Downloads buoy status information and adds it to the buoy data if available
+     *
+     * @param buoyData the data to store the application status in
+     */
+    private void downloadStatusInformation(BuoyData buoyData) {
+        AppStatus status;
+        InputStream input = null;
+        Reader reader = null;
+        //noinspection EmptyCatchBlock
+        try {
+            URL url = new URL(statusQueryURL);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(10000 /* milliseconds */);
+            conn.setConnectTimeout(15000 /* milliseconds */);
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
+            // Starts the query
+            conn.connect();
+            input = conn.getInputStream();
+            reader = new InputStreamReader(input, "UTF-8");
+
+            status = gson.fromJson(reader, AppStatus.class);
+
+            if (status != null){
+                buoyData.setStatus(status);
+            }
+        } catch (Throwable e) {
+        } finally {
+            //noinspection EmptyCatchBlock
+            try {
+                // Cleanup
+                if (reader != null) {
+                    reader.close();
+                }
+                if (input != null) {
+                    input.close();
+                }
+            } catch (IOException e) {
+            }
+        }
+    }
 }
