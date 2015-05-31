@@ -23,6 +23,7 @@ import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -80,10 +81,11 @@ public class MainActivity extends Activity {
 	/**
 	 * Format double values for display
 	 */
+
 	private static final DecimalFormat decimalFormat = new DecimalFormat(
 			"##0.0");
 
-	/**
+    /**
 	 * Parse and format date values
 	 */
 	private static final SimpleDateFormat outputDateFormat = new SimpleDateFormat(
@@ -92,7 +94,7 @@ public class MainActivity extends Activity {
     /**
      * Used to parse the JSON data we we get from the server
      */
-    private static final Gson gson = new GsonBuilder().registerTypeAdapter(Date.class, new DateTypeAdapter()).create();
+    private static final Gson gson = new GsonBuilder().registerTypeAdapter(Date.class, new DateTypeAdapter()).serializeSpecialFloatingPointValues().create();
 
 	/**
 	 * Wind directions text array
@@ -147,6 +149,8 @@ public class MainActivity extends Activity {
 	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+
+
 		super.onCreate(savedInstanceState);
 
 		// Get values from resources
@@ -285,6 +289,10 @@ public class MainActivity extends Activity {
 
 		setWaterDepthCaptions();
 		setAdditionalDataVisibility();
+
+        DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
+        decimalFormatSymbols.setNaN("-");
+        decimalFormat.setDecimalFormatSymbols(decimalFormatSymbols);
 	}
 
 	/**
@@ -401,8 +409,8 @@ public class MainActivity extends Activity {
 	 * @param windDirectionInDegrees The wind direction value
 	 * @return A formatted wind direction string
 	 */
-	String formatWindDirection(double windDirectionInDegrees) {
-		if (windDirectionInDegrees <= 0 || windDirectionInDegrees > 360) {
+	String formatWindDirection(Double windDirectionInDegrees) {
+		if (windDirectionInDegrees == Double.NaN || windDirectionInDegrees <= 0 || windDirectionInDegrees > 360) {
 			return getString(R.string.unknown_value);
 		}
 
@@ -431,9 +439,9 @@ public class MainActivity extends Activity {
 	 * @param value The temperature value
 	 * @return A formatted temperature string
 	 */
-	private String formatTemperature(double value) {
+	private String formatTemperature(Double value) {
         // A quick sanity check on the temperature
-        if (value <= 0 || value > 100){
+        if (value == Double.NaN || value <= 0 || value > 100){
             return "-";
         }
 
@@ -463,7 +471,11 @@ public class MainActivity extends Activity {
 	 * @param value The wind speed value
 	 * @return A formatted wind speed string
 	 */
-	private String formatWindSpeed(double value) {
+	private String formatWindSpeed(Double value) {
+        if (value == Double.NaN){
+            return "-";
+        }
+
 		// What units should we use to display wind speed?
 		String windSpeedUnits = PreferenceManager.getDefaultSharedPreferences(
 				this).getString(SettingsActivity.KEY_PREF_WIND_SPEED_UNITS, "");
@@ -496,7 +508,11 @@ public class MainActivity extends Activity {
 	 * @param value our humidity value
 	 * @return The formatted humidity string
 	 */
-	private String formatHumidity(double value) {
+	private String formatHumidity(Double value) {
+        if (value == Double.NaN){
+            return "-";
+        }
+
 		String humidityUnitSuffix = getString(R.string.percent_suffix);
 		return (decimalFormat.format(value) + " " + humidityUnitSuffix);
 	}

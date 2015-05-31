@@ -55,7 +55,7 @@ public class BuoyData {
 
     private String [] symbols = null;
     private Date [] stamps = null;
-    private float [][] data = null;
+    private Double [][] data = null;
     private AppStatus appStatus = null;
 
     private EnumMap<BuoyDataType, Integer> columnIndices = new EnumMap<BuoyDataType, Integer>(BuoyDataType.class);
@@ -120,7 +120,7 @@ public class BuoyData {
      * @param type the data type we're fetching
      * @return The most recent value for this data type, or -1 if we have no values
      */
-    public double getMostRecentValue(BuoyDataType type) {
+    public Double getMostRecentValue(BuoyDataType type) {
         if (hasData(type)) {
             int columnIndex = columnIndices.get(type);
             if (data.length > 0) {
@@ -129,6 +129,6 @@ public class BuoyData {
                 }
             }
         }
-        return -1;
+        return Double.NaN;
     }
 }

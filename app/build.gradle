@@ -7,8 +7,9 @@ android {
         applicationId "com.candacebain.lakemendotabuoy"
         minSdkVersion 9
         targetSdkVersion 22
-        versionCode 7
+        versionCode 8
         versionName "1.4"
+        testInstrumentationRunner "android.test.InstrumentationTestRunner"
     }
     buildTypes {
         release {
@@ -21,8 +22,7 @@ android {
 }
 
 dependencies {
-    androidTestCompile 'junit:junit:4.12'
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile 'junit:junit:4.+'
     compile files('libs/gson-2.2.4.jar')
     compile 'com.google.android.gms:play-services:7.5.0'
 }
