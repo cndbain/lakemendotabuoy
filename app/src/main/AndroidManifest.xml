@@ -9,9 +9,6 @@
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <!-- Optional permission for reliable local dispatching on non-Google Play devices -->
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-
 	<application
 		android:allowBackup="true"
 		android:icon="@drawable/ic_launcher"

@@ -472,7 +472,7 @@ public class MainActivity extends Activity {
 	 * @return A formatted wind speed string
 	 */
 	private String formatWindSpeed(Double value) {
-        if (value == Double.NaN){
+        if (value == Double.NaN || value < 0){
             return "-";
         }
 
@@ -509,7 +509,7 @@ public class MainActivity extends Activity {
 	 * @return The formatted humidity string
 	 */
 	private String formatHumidity(Double value) {
-        if (value == Double.NaN){
+        if (value == Double.NaN || value < 0){
             return "-";
         }
 
@@ -523,68 +523,72 @@ public class MainActivity extends Activity {
 	 * @param result the data we got back from the buoy server
 	 */
 	private void displayData(BuoyData result) {
-		if (result.hasData(BuoyData.BuoyDataType.WIND_DIRECTION)) {
-			windDirection.setText(formatWindDirection(result
-					.getMostRecentValue(BuoyData.BuoyDataType.WIND_DIRECTION)));
-		}
-		if (result.hasData(BuoyData.BuoyDataType.WIND_SPEED)) {
-			windSpeed.setText(formatWindSpeed(result.getMostRecentValue(BuoyData.BuoyDataType.WIND_SPEED)));
-		}
-		if (result.hasData(BuoyData.BuoyDataType.WIND_GUST)) {
-			windGust.setText(formatWindSpeed(result.getMostRecentValue(BuoyData.BuoyDataType.WIND_GUST)));
-		}
-		if (result.hasData(BuoyData.BuoyDataType.AIR_TEMP)) {
-			airTemperature.setText(formatTemperature(result.getMostRecentValue(BuoyData.BuoyDataType.AIR_TEMP)));
-		}
-		if (result.hasData(BuoyData.BuoyDataType.REL_HUM)) {
-			humidity.setText(formatHumidity(result.getMostRecentValue(BuoyData.BuoyDataType.REL_HUM)));
-		}
-		if (result.hasData(BuoyData.BuoyDataType.WATER_TEMP_0)) {
-			surfaceTemperature.setText(formatTemperature(result
-					.getMostRecentValue(BuoyData.BuoyDataType.WATER_TEMP_0)));
-		}
-		if (result.hasData(BuoyData.BuoyDataType.WATER_TEMP_1)) {
-			oneMeterTemperature.setText(formatTemperature(result
-					.getMostRecentValue(BuoyData.BuoyDataType.WATER_TEMP_1)));
-		}
-		if (result.hasData(BuoyData.BuoyDataType.WATER_TEMP_5)) {
-			fiveMeterTemperature.setText(formatTemperature(result
-					.getMostRecentValue(BuoyData.BuoyDataType.WATER_TEMP_5)));
-		}
-		if (result.hasData(BuoyData.BuoyDataType.WATER_TEMP_10)) {
-			tenMeterTemperature.setText(formatTemperature(result
-					.getMostRecentValue(BuoyData.BuoyDataType.WATER_TEMP_10)));
-		}
-		if (result.hasData(BuoyData.BuoyDataType.WATER_TEMP_15)) {
-			fifteenMeterTemperature.setText(formatTemperature(result
-					.getMostRecentValue(BuoyData.BuoyDataType.WATER_TEMP_15)));
-		}
-		if (result.hasData(BuoyData.BuoyDataType.WATER_TEMP_20)) {
-			twentyMeterTemperature.setText(formatTemperature(result
-					.getMostRecentValue(BuoyData.BuoyDataType.WATER_TEMP_20)));
-		}
-		if (result.hasData(BuoyData.BuoyDataType.DEWPOINT_CALC)) {
-			dewPoint.setText(formatTemperature(result.getMostRecentValue(BuoyData.BuoyDataType.DEWPOINT_CALC)));
-		}
-		if (result.hasData(BuoyData.BuoyDataType.DO_SAT)) {
-			dissolvedOxygen.setText(decimalFormat.format(result.getMostRecentValue(BuoyData.BuoyDataType.DO_SAT)));
-		}
-		if (result.hasData(BuoyData.BuoyDataType.DO_PPM)) {
-			dissolvedOxygenSaturation.setText(decimalFormat.format(result
-					.getMostRecentValue(BuoyData.BuoyDataType.DO_PPM)));
-		}
-		if (result.hasData(BuoyData.BuoyDataType.CHLOROPHYLL)) {
-			chlorophyll.setText(decimalFormat.format(result.getMostRecentValue(BuoyData.BuoyDataType.CHLOROPHYLL)));
-		}
-		if (result.hasData(BuoyData.BuoyDataType.PHYCOCYANIN)) {
-			phycocyanin.setText(decimalFormat.format(result.getMostRecentValue(BuoyData.BuoyDataType.PHYCOCYANIN)));
-		}
-		Date timeStamp = result.getMostRecentTimestamp();
-		if (timeStamp != null){
-			updatedAt.setText(outputDateFormat.format(timeStamp));
-		}
-
         AppStatus appStatus = result.getAppStatus();
+
+        if (appStatus == null || appStatus.isBuoyInWater()) {
+            if (result.hasData(BuoyData.BuoyDataType.WIND_DIRECTION)) {
+                windDirection.setText(formatWindDirection(result
+                        .getMostRecentValue(BuoyData.BuoyDataType.WIND_DIRECTION)));
+            }
+            if (result.hasData(BuoyData.BuoyDataType.WIND_SPEED)) {
+                windSpeed.setText(formatWindSpeed(result.getMostRecentValue(BuoyData.BuoyDataType.WIND_SPEED)));
+            }
+            if (result.hasData(BuoyData.BuoyDataType.WIND_GUST)) {
+                windGust.setText(formatWindSpeed(result.getMostRecentValue(BuoyData.BuoyDataType.WIND_GUST)));
+            }
+            if (result.hasData(BuoyData.BuoyDataType.AIR_TEMP)) {
+                airTemperature.setText(formatTemperature(result.getMostRecentValue(BuoyData.BuoyDataType.AIR_TEMP)));
+            }
+            if (result.hasData(BuoyData.BuoyDataType.REL_HUM)) {
+                humidity.setText(formatHumidity(result.getMostRecentValue(BuoyData.BuoyDataType.REL_HUM)));
+            }
+            if (result.hasData(BuoyData.BuoyDataType.WATER_TEMP_0)) {
+                surfaceTemperature.setText(formatTemperature(result
+                        .getMostRecentValue(BuoyData.BuoyDataType.WATER_TEMP_0)));
+            }
+            if (result.hasData(BuoyData.BuoyDataType.WATER_TEMP_1)) {
+                oneMeterTemperature.setText(formatTemperature(result
+                        .getMostRecentValue(BuoyData.BuoyDataType.WATER_TEMP_1)));
+            }
+            if (result.hasData(BuoyData.BuoyDataType.WATER_TEMP_5)) {
+                fiveMeterTemperature.setText(formatTemperature(result
+                        .getMostRecentValue(BuoyData.BuoyDataType.WATER_TEMP_5)));
+            }
+            if (result.hasData(BuoyData.BuoyDataType.WATER_TEMP_10)) {
+                tenMeterTemperature.setText(formatTemperature(result
+                        .getMostRecentValue(BuoyData.BuoyDataType.WATER_TEMP_10)));
+            }
+            if (result.hasData(BuoyData.BuoyDataType.WATER_TEMP_15)) {
+                fifteenMeterTemperature.setText(formatTemperature(result
+                        .getMostRecentValue(BuoyData.BuoyDataType.WATER_TEMP_15)));
+            }
+            if (result.hasData(BuoyData.BuoyDataType.WATER_TEMP_20)) {
+                twentyMeterTemperature.setText(formatTemperature(result
+                        .getMostRecentValue(BuoyData.BuoyDataType.WATER_TEMP_20)));
+            }
+            if (result.hasData(BuoyData.BuoyDataType.DEWPOINT_CALC)) {
+                dewPoint.setText(formatTemperature(result.getMostRecentValue(BuoyData.BuoyDataType.DEWPOINT_CALC)));
+            }
+            if (result.hasData(BuoyData.BuoyDataType.DO_SAT)) {
+                dissolvedOxygen.setText(decimalFormat.format(result.getMostRecentValue(BuoyData.BuoyDataType.DO_SAT)));
+            }
+            if (result.hasData(BuoyData.BuoyDataType.DO_PPM)) {
+                dissolvedOxygenSaturation.setText(decimalFormat.format(result
+                        .getMostRecentValue(BuoyData.BuoyDataType.DO_PPM)));
+            }
+            if (result.hasData(BuoyData.BuoyDataType.CHLOROPHYLL)) {
+                chlorophyll.setText(decimalFormat.format(result.getMostRecentValue(BuoyData.BuoyDataType.CHLOROPHYLL)));
+            }
+            if (result.hasData(BuoyData.BuoyDataType.PHYCOCYANIN)) {
+                phycocyanin.setText(decimalFormat.format(result.getMostRecentValue(BuoyData.BuoyDataType.PHYCOCYANIN)));
+            }
+        }
+
+        Date timeStamp = result.getMostRecentTimestamp();
+        if (timeStamp != null) {
+            updatedAt.setText(outputDateFormat.format(timeStamp));
+        }
+
         if (appStatus != null && appStatus.getDisplayStatus() != null && appStatus.getDisplayStatus().length() > 0){
             messageText.setText(Html.fromHtml(appStatus.getDisplayStatus()));
             messageText.setMovementMethod(LinkMovementMethod.getInstance());
