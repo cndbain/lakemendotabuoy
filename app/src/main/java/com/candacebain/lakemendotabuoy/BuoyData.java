@@ -57,7 +57,6 @@ public class BuoyData {
     private Date [] stamps = null;
     private Double [][] data = null;
     private AppStatus appStatus = null;
-    private boolean buoyInWater = true;
 
     private EnumMap<BuoyDataType, Integer> columnIndices = new EnumMap<BuoyDataType, Integer>(BuoyDataType.class);
 
@@ -89,15 +88,6 @@ public class BuoyData {
      */
     public void setStatus(AppStatus appStatus) {
         this.appStatus = appStatus;
-    }
-
-    /**
-     * Sets whether the buoy is currently in the water
-     *
-     * @param buoyInWater
-     */
-    public void setBuoyInWater(Boolean buoyInWater){
-        this.buoyInWater = buoyInWater;
     }
 
     /**

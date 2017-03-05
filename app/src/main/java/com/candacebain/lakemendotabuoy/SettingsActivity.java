@@ -100,18 +100,20 @@ OnSharedPreferenceChangeListener{
 	 */
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		
-		if (key.equals(KEY_PREF_UPDATE_INTERVAL)){
-			prefUpdateInterval.setSummary(prefUpdateInterval.getEntry());
-		}
-		else if (key.equals(KEY_PREF_WIND_SPEED_UNITS)){
-			prefWindSpeedUnits.setSummary(prefWindSpeedUnits.getEntry());
-		}
-		else if (key.equals(KEY_PREF_TEMPERATURE_UNITS)){
-			prefTemperatureUnits.setSummary(prefTemperatureUnits.getEntry());
-		}
-		else if (key.equals(KEY_PREF_DISTANCE_UNITS)){
-			prefDistanceUnits.setSummary(prefDistanceUnits.getEntry());
+
+		switch (key) {
+			case KEY_PREF_UPDATE_INTERVAL:
+				prefUpdateInterval.setSummary(prefUpdateInterval.getEntry());
+				break;
+			case KEY_PREF_WIND_SPEED_UNITS:
+				prefWindSpeedUnits.setSummary(prefWindSpeedUnits.getEntry());
+				break;
+			case KEY_PREF_TEMPERATURE_UNITS:
+				prefTemperatureUnits.setSummary(prefTemperatureUnits.getEntry());
+				break;
+			case KEY_PREF_DISTANCE_UNITS:
+				prefDistanceUnits.setSummary(prefDistanceUnits.getEntry());
+				break;
 		}
 	}
 }

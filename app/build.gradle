@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 22
-    buildToolsVersion "22.0.0"
+    buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId "com.candacebain.lakemendotabuoy"
         minSdkVersion 9
         targetSdkVersion 22
-        versionCode 9
-        versionName "1.5"
+        versionCode 10
+        versionName "1.6"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
     }
     buildTypes {
@@ -24,5 +24,7 @@ android {
 dependencies {
     androidTestCompile 'junit:junit:4.+'
     compile files('libs/gson-2.2.4.jar')
-    compile 'com.google.android.gms:play-services:7.5.0'
+    compile 'com.google.android.gms:play-services-analytics:10.0.1'
 }
+
+apply plugin: 'com.google.gms.google-services'
