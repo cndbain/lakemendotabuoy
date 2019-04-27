@@ -9,25 +9,25 @@ package com.candacebain.lakemendotabuoy;
  *
  * A status message to display to the user if something is wrong
  */
-public class AppStatus {
+class AppStatus {
 
     private boolean buoyInWater = false;
 
     private String displayStatus = "";
 
-    public boolean isBuoyInWater() {
+    boolean isBuoyInWater() {
         return buoyInWater;
     }
 
-    public void setBuoyInWater(boolean buoyInWater) {
+    void setBuoyInWater(boolean buoyInWater) {
         this.buoyInWater = buoyInWater;
     }
 
-    public String getDisplayStatus() {
+    String getDisplayStatus() {
         return displayStatus;
     }
 
-    public void setDisplayStatus(String displayStatus) {
+    void setDisplayStatus(String displayStatus) {
         this.displayStatus = displayStatus;
     }
 }

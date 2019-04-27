@@ -43,7 +43,6 @@ OnSharedPreferenceChangeListener{
 	 * @see android.app.Activity#onCreate()
 	 */
 	@SuppressLint("NewApi")
-	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -65,7 +64,6 @@ OnSharedPreferenceChangeListener{
 	 * 
 	 * @see android.app.Activity#onResume()
 	 */
-    @SuppressWarnings("deprecation")
 	@Override
     protected void onResume() {
         super.onResume();
@@ -86,7 +84,6 @@ OnSharedPreferenceChangeListener{
 	 * 
 	 * @see android.app.Activity#onPause()
 	 */
-    @SuppressWarnings("deprecation")
 	@Override
     protected void onPause() {
         super.onPause();

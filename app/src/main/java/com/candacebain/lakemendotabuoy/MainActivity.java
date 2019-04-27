@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -53,15 +54,10 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class MainActivity extends Activity {
-
-	public static GoogleAnalytics analytics;
-	public static Tracker tracker;
 
 	/**
 	 * The source of all our buoy data
@@ -161,14 +157,6 @@ public class MainActivity extends Activity {
 		}
 		setContentView(R.layout.activity_main);
 
-        // Enable google analytics
-        analytics = GoogleAnalytics.getInstance(this);
-        analytics.setLocalDispatchPeriod(1800);
-
-        tracker = analytics.newTracker("UA-63582842-1");
-        tracker.enableExceptionReporting(true);
-        tracker.enableAutoActivityTracking(true);
-
 		// Set up our views
 		initializeViews();
 	}
@@ -238,12 +226,10 @@ public class MainActivity extends Activity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
-		switch (requestCode) {
-		case SETTINGS_RESPONSE:
+		if (requestCode == SETTINGS_RESPONSE) {
 			setWaterDepthCaptions();
 			setAdditionalDataVisibility();
 			startUpdateTimer();
-			break;
 		}
 	}
 
@@ -251,41 +237,41 @@ public class MainActivity extends Activity {
 	 * Find the views we want to interact with while the application is running
 	 */
 	private void initializeViews() {
-		windDirection = (TextView) findViewById(R.id.wind_direction);
-		windSpeed = (TextView) findViewById(R.id.wind_speed);
-		windGust = (TextView) findViewById(R.id.wind_gust);
-		airTemperature = (TextView) findViewById(R.id.air_temperature);
-		humidity = (TextView) findViewById(R.id.humidity);
+		windDirection = findViewById(R.id.wind_direction);
+		windSpeed = findViewById(R.id.wind_speed);
+		windGust = findViewById(R.id.wind_gust);
+		airTemperature = findViewById(R.id.air_temperature);
+		humidity = findViewById(R.id.humidity);
 
-		surfaceTemperature = (TextView) findViewById(R.id.surface_temperature);
-		oneMeterTemperature = (TextView) findViewById(R.id.one_meter_temperature);
-		fiveMeterTemperature = (TextView) findViewById(R.id.five_meter_temperature);
-		tenMeterTemperature = (TextView) findViewById(R.id.ten_meter_temperature);
-		fifteenMeterTemperature = (TextView) findViewById(R.id.fifteen_meter_temperature);
-		twentyMeterTemperature = (TextView) findViewById(R.id.twenty_meter_temperature);
+		surfaceTemperature = findViewById(R.id.surface_temperature);
+		oneMeterTemperature = findViewById(R.id.one_meter_temperature);
+		fiveMeterTemperature = findViewById(R.id.five_meter_temperature);
+		tenMeterTemperature = findViewById(R.id.ten_meter_temperature);
+		fifteenMeterTemperature = findViewById(R.id.fifteen_meter_temperature);
+		twentyMeterTemperature = findViewById(R.id.twenty_meter_temperature);
 
-		oneMeterCaption = (TextView) findViewById(R.id.one_meter_temperature_caption);
-		fiveMeterCaption = (TextView) findViewById(R.id.five_meter_temperature_caption);
-		tenMeterCaption = (TextView) findViewById(R.id.ten_meter_temperature_caption);
-		fifteenMeterCaption = (TextView) findViewById(R.id.fifteen_meter_temperature_caption);
-		twentyMeterCaption = (TextView) findViewById(R.id.twenty_meter_temperature_caption);
+		oneMeterCaption = findViewById(R.id.one_meter_temperature_caption);
+		fiveMeterCaption = findViewById(R.id.five_meter_temperature_caption);
+		tenMeterCaption = findViewById(R.id.ten_meter_temperature_caption);
+		fifteenMeterCaption = findViewById(R.id.fifteen_meter_temperature_caption);
+		twentyMeterCaption = findViewById(R.id.twenty_meter_temperature_caption);
 
-		dewPoint = (TextView) findViewById(R.id.dew_point);
-		dissolvedOxygen = (TextView) findViewById(R.id.dissolved_oxygen);
-		dissolvedOxygenSaturation = (TextView) findViewById(R.id.dissolved_oxygen_saturation);
-		chlorophyll = (TextView) findViewById(R.id.chlorophyll);
-		phycocyanin = (TextView) findViewById(R.id.phycocyanin);
+		dewPoint = findViewById(R.id.dew_point);
+		dissolvedOxygen = findViewById(R.id.dissolved_oxygen);
+		dissolvedOxygenSaturation = findViewById(R.id.dissolved_oxygen_saturation);
+		chlorophyll = findViewById(R.id.chlorophyll);
+		phycocyanin = findViewById(R.id.phycocyanin);
 
-		additionalDataCaption = (TextView) findViewById(R.id.additional_data_caption);
+		additionalDataCaption = findViewById(R.id.additional_data_caption);
 		additionalDataLine = findViewById(R.id.additional_data_line);
-		additionalDataTable = (TableLayout) findViewById(R.id.additional_data_table);
+		additionalDataTable = findViewById(R.id.additional_data_table);
 
-        messageDataCaption = (TextView) findViewById(R.id.message_caption);
+        messageDataCaption = findViewById(R.id.message_caption);
         messageDataLine = findViewById(R.id.message_line);
-        messageText = (TextView) findViewById(R.id.message_text);
+        messageText = findViewById(R.id.message_text);
 
-		updatedAt = (TextView) findViewById(R.id.updated_at);
-		updateProgressBar = (ProgressBar) findViewById(R.id.update_progress_bar);
+		updatedAt = findViewById(R.id.updated_at);
+		updateProgressBar = findViewById(R.id.update_progress_bar);
 
 		setWaterDepthCaptions();
 		setAdditionalDataVisibility();
@@ -410,7 +396,7 @@ public class MainActivity extends Activity {
 	 * @return A formatted wind direction string
 	 */
 	String formatWindDirection(Double windDirectionInDegrees) {
-		if (windDirectionInDegrees == Double.NaN || windDirectionInDegrees <= 0 || windDirectionInDegrees > 360) {
+		if (Double.isNaN(windDirectionInDegrees) || windDirectionInDegrees <= 0 || windDirectionInDegrees > 360) {
 			return getString(R.string.unknown_value);
 		}
 
@@ -441,7 +427,7 @@ public class MainActivity extends Activity {
 	 */
 	private String formatTemperature(Double value) {
         // A quick sanity check on the temperature
-        if (value == Double.NaN || value <= 0 || value > 100){
+        if (Double.isNaN(value) || value <= 0 || value > 100){
             return "-";
         }
 
@@ -472,7 +458,7 @@ public class MainActivity extends Activity {
 	 * @return A formatted wind speed string
 	 */
 	private String formatWindSpeed(Double value) {
-        if (value == Double.NaN || value < 0){
+        if (Double.isNaN(value) || value < 0){
             return "-";
         }
 
@@ -509,7 +495,7 @@ public class MainActivity extends Activity {
 	 * @return The formatted humidity string
 	 */
 	private String formatHumidity(Double value) {
-        if (value == Double.NaN || value < 0){
+        if (Double.isNaN(value) || value < 0){
             return "-";
         }
 
@@ -621,7 +607,7 @@ public class MainActivity extends Activity {
 
         View aboutView = inflater.inflate(R.layout.about, null);
 
-        TextView versionNameTextView = (TextView) aboutView.findViewById(R.id.version_text);
+        TextView versionNameTextView = aboutView.findViewById(R.id.version_text);
         try {
             versionNameTextView.setText(getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
         } catch (PackageManager.NameNotFoundException e) {
@@ -696,7 +682,7 @@ public class MainActivity extends Activity {
 	 * @return a BuoyData object
 	 */
 	private BuoyData downloadData() throws IOException {
-		BuoyData result = null;
+		BuoyData result;
 		InputStream input = null;
         Reader reader = null;
 		try {
@@ -709,7 +695,7 @@ public class MainActivity extends Activity {
 			// Starts the query
 			conn.connect();
 			input = conn.getInputStream();
-            reader = new InputStreamReader(input, "UTF-8");
+            reader = new InputStreamReader(input, Charset.forName("UTF-8"));
 
 			result = gson.fromJson(reader, BuoyData.class);
             downloadStatusInformation(result);
@@ -747,9 +733,9 @@ public class MainActivity extends Activity {
             // Starts the query
             conn.connect();
             input = conn.getInputStream();
-            reader = new InputStreamReader(input, "UTF-8");
+			reader = new InputStreamReader(input, Charset.forName("UTF-8"));
 
-            status = gson.fromJson(reader, AppStatus.class);
+			status = gson.fromJson(reader, AppStatus.class);
 
             if (status != null){
                 buoyData.setStatus(status);

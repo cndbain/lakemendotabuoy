@@ -58,7 +58,7 @@ public class BuoyData {
     private Double [][] data = null;
     private AppStatus appStatus = null;
 
-    private EnumMap<BuoyDataType, Integer> columnIndices = new EnumMap<BuoyDataType, Integer>(BuoyDataType.class);
+    private EnumMap<BuoyDataType, Integer> columnIndices = new EnumMap<>(BuoyDataType.class);
 
     /**
      * Our no-argument constructor, will only be called by GSON
@@ -86,21 +86,21 @@ public class BuoyData {
      *
      * @param appStatus the application status
      */
-    public void setStatus(AppStatus appStatus) {
+    void setStatus(AppStatus appStatus) {
         this.appStatus = appStatus;
     }
 
     /**
      * @return The application status, or none if not available
      */
-    public AppStatus getAppStatus(){
+    AppStatus getAppStatus(){
         return this.appStatus;
     }
 
     /**
      * @return The most recent timestamp
      */
-    public Date getMostRecentTimestamp(){
+    Date getMostRecentTimestamp(){
         if (stamps.length > 0){
             return stamps[stamps.length-1];
         }
@@ -111,7 +111,7 @@ public class BuoyData {
      * @param type the data type we're checking
      * @return true if we have data for this type
      */
-    public boolean hasData(BuoyDataType type){
+    boolean hasData(BuoyDataType type){
         initColumnIndices();
         return (columnIndices.containsKey(type));
     }
@@ -120,7 +120,7 @@ public class BuoyData {
      * @param type the data type we're fetching
      * @return The most recent value for this data type, or -1 if we have no values
      */
-    public Double getMostRecentValue(BuoyDataType type) {
+    Double getMostRecentValue(BuoyDataType type) {
         if (hasData(type)) {
             int columnIndex = columnIndices.get(type);
             if (data.length > 0) {
