@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Lake Mendota Buoy</string>
-    <string name="app_version_name">1.6</string>
+    <string name="app_version_name">1.8</string>
     <string name="atmosphere">Atmosphere</string>
     <string name="wind_direction_caption">Wind direction</string>
     <string name="wind_speed_caption">Wind speed</string>
