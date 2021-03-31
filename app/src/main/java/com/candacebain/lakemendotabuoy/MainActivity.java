@@ -427,7 +427,7 @@ public class MainActivity extends Activity {
 	 */
 	private String formatTemperature(Double value) {
         // A quick sanity check on the temperature
-        if (Double.isNaN(value) || value <= 0 || value > 100){
+        if (Double.isNaN(value) || value <= -50 || value > 100){
             return "-";
         }
 

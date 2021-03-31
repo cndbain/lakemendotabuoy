@@ -7,7 +7,7 @@ android {
         applicationId "com.candacebain.lakemendotabuoy"
         minSdkVersion 9
         targetSdkVersion 29
-        versionCode 13
+        versionCode 14
         versionName "1.8"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
     }
