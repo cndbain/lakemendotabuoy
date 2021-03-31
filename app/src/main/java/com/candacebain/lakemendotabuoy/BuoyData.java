@@ -9,25 +9,26 @@ public class BuoyData {
      * The data identifiers from the metobjs server
      */
     public enum BuoyDataType{
-        AIR_TEMP("AIR_TEMP"),
-        REL_HUM("REL_HUM"),
-        WIND_SPEED("WIND_SPEED_2.0"),
-        WIND_DIRECTION("WIND_DIRECTION_2.0"),
-        WIND_GUST("WIND_GUST"),
+        AIR_TEMP("mendota.buoy.air_temp"),
+        REL_HUM("mendota.buoy.rel_hum"),
+        WIND_SPEED("mendota.buoy.wind_speed"),
+        WIND_DIRECTION("mendota.buoy.wind_direction"),
+        WIND_GUST("mendota.buoy.gust"),
         TIMESTAMP("timestamp"),
-        WATER_TEMP_0("WATER_TEMP_0.0"),
-        WATER_TEMP_1("WATER_TEMP_1.0"),
-        WATER_TEMP_5("WATER_TEMP_5.0"),
-        WATER_TEMP_10("WATER_TEMP_10.0"),
-        WATER_TEMP_15("WATER_TEMP_15.0"),
-        WATER_TEMP_20("WATER_TEMP_20.0"),
-        DEWPOINT_CALC("DEWPOINT_CALC"),
-        DO_SAT("DO_SAT"),
-        DO_PPM("DO_PPM"),
-        CHLOROPHYLL("CHLOROPHYLL_0.4"),
-        PHYCOCYANIN("PHYCOCYANIN_0.4"),
+        /*  The number 1 represents the surface temperature (0m), 2 is 0.5m, 3 is 1.0m, 4 is 1.5m, 5 is 2m, followed by 1m increments up to number 23 which is at a depth of 20m below the surface */
+        WATER_TEMP_0("mendota.buoy.water_temp_1"),
+        WATER_TEMP_1("mendota.buoy.water_temp_3"),
+        WATER_TEMP_5("mendota.buoy.water_temp_8"),
+        WATER_TEMP_10("mendota.buoy.water_temp_13"),
+        WATER_TEMP_15("mendota.buoy.water_temp_18"),
+        WATER_TEMP_20("mendota.buoy.water_temp_23"),
+        DEWPOINT_CALC("mendota.buoy.dewpoint"),
+        DO_SAT("mendota.buoy.doptosat"),
+        DO_PPM("mendota.buoy.doptoppm"),
+        CHLOROPHYLL("mendota.buoy.chlorophyll"),
+        PHYCOCYANIN("mendota.buoy.phycocyanin"),
         UNKNOWN("");
-        
+
         private String metobsString;
 
         BuoyDataType(String metobsString){
@@ -53,9 +54,16 @@ public class BuoyData {
         }
     }
 
-    private String [] symbols = null;
-    private Date [] stamps = null;
-    private Double [][] data = null;
+    public class Results {
+        public Double [][] data = null;
+        private String [] symbols = null;
+        private Date [] timestamps = null;
+    }
+
+    private int code;
+    private int num_results;
+    private String status;
+    Results results = null;
     private AppStatus appStatus = null;
 
     private EnumMap<BuoyDataType, Integer> columnIndices = new EnumMap<>(BuoyDataType.class);
@@ -72,8 +80,8 @@ public class BuoyData {
      */
     private void initColumnIndices() {
         if (columnIndices.size() == 0) {
-            for (int i = 0; i < symbols.length; i++) {
-                BuoyDataType buoyDataType = BuoyDataType.fromString(symbols[i]);
+            for (int i = 0; i < results.symbols.length; i++) {
+                BuoyDataType buoyDataType = BuoyDataType.fromString(results.symbols[i]);
                 if (buoyDataType != BuoyDataType.UNKNOWN) {
                     columnIndices.put(buoyDataType, i);
                 }
@@ -101,8 +109,8 @@ public class BuoyData {
      * @return The most recent timestamp
      */
     Date getMostRecentTimestamp(){
-        if (stamps.length > 0){
-            return stamps[stamps.length-1];
+        if (results.timestamps.length > 0){
+            return results.timestamps[results.timestamps.length-1];
         }
         return null;
     }
@@ -123,9 +131,12 @@ public class BuoyData {
     Double getMostRecentValue(BuoyDataType type) {
         if (hasData(type)) {
             int columnIndex = columnIndices.get(type);
-            if (data.length > 0) {
-                if (data[data.length - 1].length > columnIndex) {
-                    return data[data.length - 1][columnIndex];
+            if (results.data.length > 0) {
+                if (results.data[results.data.length - 1].length > columnIndex) {
+                    Double value = results.data[results.data.length - 1][columnIndex];
+                    if (value != null) {
+                        return value;
+                    }
                 }
             }
         }

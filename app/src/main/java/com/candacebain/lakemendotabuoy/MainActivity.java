@@ -62,7 +62,7 @@ public class MainActivity extends Activity {
 	/**
 	 * The source of all our buoy data
 	 */
-	private static final String dataQueryURL = "http://metobs.ssec.wisc.edu/app/mendota/buoy/data/json?symbols=t:rh:td:spd:dir:gust:wt_0.0:wt_1.0:wt_5.0:wt_10.0:wt_15.0:wt_20.0:do_ppm:do_sat:chlor:pc";
+	private static final String dataQueryURL = "http://metobs.ssec.wisc.edu/api/data.json?symbols=mendota.buoy.air_temp:mendota.buoy.rel_hum:mendota.buoy.dewpoint:mendota.buoy.wind_speed:mendota.buoy.wind_direction:mendota.buoy.gust:mendota.buoy.water_temp_1:mendota.buoy.water_temp_3:mendota.buoy.water_temp_8:mendota.buoy.water_temp_13:mendota.buoy.water_temp_18:mendota.buoy.water_temp_23:mendota.buoy.doptoppm:mendota.buoy.doptosat:mendota.buoy.chlorophyll:mendota.buoy.phycocyanin";
 
     /**
      * Extra status information about the buoy
@@ -90,7 +90,7 @@ public class MainActivity extends Activity {
     /**
      * Used to parse the JSON data we we get from the server
      */
-    private static final Gson gson = new GsonBuilder().registerTypeAdapter(Date.class, new DateTypeAdapter()).serializeSpecialFloatingPointValues().create();
+    private static final Gson gson = new GsonBuilder().create();
 
 	/**
 	 * Wind directions text array
