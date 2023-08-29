@@ -1,14 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion '28.0.3'
+    compileSdk 33
     defaultConfig {
         applicationId "com.candacebain.lakemendotabuoy"
         minSdkVersion 9
-        targetSdkVersion 29
-        versionCode 14
-        versionName "1.8"
+        targetSdkVersion 33
+        versionCode 15
+        versionName "1.9"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
     }
     buildTypes {
@@ -19,10 +18,11 @@ android {
     }
     productFlavors {
     }
+    namespace 'com.candacebain.lakemendotabuoy'
 }
 
 dependencies {
-    androidTestCompile 'junit:junit:4.+'
+    androidTestImplementation 'junit:junit:4.13.2'
     implementation 'com.google.code.gson:gson:2.8.5'
 }
 
