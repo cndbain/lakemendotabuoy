@@ -1,7 +1,7 @@
 lakemendotabuoy
 ===============
 
-**Lake Mendota Buoy Data Android Applicaion**
+**Lake Mendota Buoy Data Android Application**
 
 The application is available [here](https://play.google.com/store/apps/details?id=com.candacebain.lakemendotabuoy) at the Google Play Store.
 
